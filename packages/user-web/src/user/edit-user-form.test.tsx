@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 describe('Edit User Form', () => {
-  it('should save the user when all fields are filled out', () => {
+  it('should render the component', () => {
     // Arrange.
 
     // Act.
