@@ -1,0 +1,41 @@
+{
+  "name": "@anthony-bonta-gaf-energy/can-i-has-interview",
+  "version": "0.0.0",
+  "description": "A project for interviews.",
+  "author": "Anthony Bonta",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthony-bonta-gaf-energy/can-i-has-interview"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "rimraf --glob 'coverage' '*.tgz' '*.log' 'packages/**/dist' 'packages/**/*.tgz' 'packages/**/*.log' 'packages/**/stats'",
+    "test": "vitest run --coverage",
+    "build": "lerna run build",
+    "make": "yarn clean && yarn test && yarn build"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.6",
+    "@types/lodash": "^4.14.202",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-istanbul": "^1.2.2",
+    "jsdom": "^24.0.0",
+    "jsdom-global": "^3.0.2",
+    "lerna": "^8.1.2",
+    "lodash-es": "^4.17.21",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.5.2",
+    "vite": "^5.0.12",
+    "vite-plugin-dts": "^3.7.2",
+    "vite-plugin-externalize-deps": "^0.8.0",
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^1.2.2"
+  }
+}
