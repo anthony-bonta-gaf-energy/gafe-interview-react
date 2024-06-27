@@ -1,4 +1,4 @@
-import { EditUserForm } from '../edit-user/edit-user-form';
+import { EditUserForm } from '../user/edit-user-form';
 
 export function UserApp() {
   return (
