@@ -53,7 +53,7 @@ choco install nodejs-lts
 To run the application, clone, install and start the user-web workspace
 
 ```sh
-git clone https://github.com/anthony-bonta-gaf-energy/can-i-has-node
+git clone https://github.com/anthony-bonta-gaf-energy/gafe-interview-react
 cd can-i-has-node
 npm ci
 npm --workspace @anthony-bonta-gaf-energy/user-web start
