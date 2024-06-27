@@ -72,13 +72,13 @@ updating an existing user if they exist.
 
 ### Feature: Create a New User
 
-**Background**:
-**When** I navigate to /users/new
+**Background**:\
+**When** I navigate to /users/new\
 **Or** I click the Create New User button on the users list
 
-_Scenario_: Allow me to fill out the form
-**Then** I should see an empty user form
-**And** I should be able to enter in the information for &lt;Field&gt of type &lt;Type&gt;
+_Scenario_: Allow me to fill out the form\
+**Then** I should see an empty user form\
+**And** I should be able to enter in the information for &lt;Field&gt of type &lt;Type&gt;\
 **Examples**:
 
 | Field        | MapsTo      | Type     |
@@ -89,11 +89,11 @@ _Scenario_: Allow me to fill out the form
 | Email        | email       | email    |
 | Type         | type        | dropdown |
 
-_Scenario_: Disable the save button when a required field is not entered
-**And** I fill out 0 or more fields
-**And** I don't fill out &lt;RequiredField&gt;
+_Scenario_: Disable the save button when a required field is not entered\
+**And** I fill out 0 or more fields\
+**And** I don't fill out &lt;RequiredField&gt;\
 **Then** the save button should be disabled
-**Examples**:
+**Examples**:\
 
 | RequiredField |
 | ------------- |
@@ -102,25 +102,25 @@ _Scenario_: Disable the save button when a required field is not entered
 | Email         |
 | Type          |
 
-_Scenario_: Save the user when the save button is clicked
-**And** I fill out all required information in the form
-**And** I click the Save button
-**Then** the user is saved
+_Scenario_: Save the user when the save button is clicked\
+**And** I fill out all required information in the form\
+**And** I click the Save button\
+**Then** the user is saved\
 **And** I am returned to the user list
 
-_Scenario_: Cancel the save
-**And** I click the cancel button
-**Then** no user is saved
+_Scenario_: Cancel the save\
+**And** I click the cancel button\
+**Then** no user is saved\
 **And** I am returned to the user list.
 
 ### Feature: Update an Existing User
 
-**Background**:
-**When** I navigate to /users/:id
+**Background**:\
+**When** I navigate to /users/:id\
 **Or** I click the edit button on any row in the users table on the users list
 
-_Scenario_: Navigate to the form.
-**Then** I &lt;Field&gt; should be populated with the value in &lt;MapsFrom&gt;
+_Scenario_: Navigate to the form.\
+**Then** I &lt;Field&gt; should be populated with the value in &lt;MapsFrom&gt;\
 **Examples**:
 
 | Field        | MapsFrom    | Type     |
@@ -131,29 +131,29 @@ _Scenario_: Navigate to the form.
 | Email        | email       | email    |
 | Type         | type        | dropdown |
 
-_Scenario_: Disable the save button when the form is clean
+_Scenario_: Disable the save button when the form is clean\
 **Then** the save button should be disabled
 
-_Scenario_: Enable the save button
-**And** I change any of the user information
-**And** all required fields are filled out
+_Scenario_: Enable the save button\
+**And** I change any of the user information\
+**And** all required fields are filled out\
 **Then** the save button is enabled
 
-_Scenario_: Disable the save button when the form returns to clean
-**And** I change any of the user information
-**And** I revert the changes that I've made
+_Scenario_: Disable the save button when the form returns to clean\
+**And** I change any of the user information\
+**And** I revert the changes that I've made\
 **Then** the save button is disabled
 
-_Scenario_: Update the user when the save button is clicked
-**And** I make a change to any field
-**And** there are no validation issues on the form
-**And** I click the Save button
-**Then** the user is saved
+_Scenario_: Update the user when the save button is clicked\
+**And** I make a change to any field\
+**And** there are no validation issues on the form\
+**And** I click the Save button\
+**Then** the user is saved\
 **And** I am returned to the user list
 
-_Scenario_: Cancel the save
-**And** I click the cancel button
-**Then** no user is saved
+_Scenario_: Cancel the save\
+**And** I click the cancel button\
+**Then** no user is saved\
 **And** I am returned to the user list.
 
 ## Rules
