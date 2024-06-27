@@ -1,10 +1,14 @@
-import { EditUserForm } from '../user/edit-user-form';
+import { Route, Routes } from 'react-router';
+import { UserListPage } from '../user/user-list-page';
+import { UserPage } from '../user/user-page';
 
 export function UserApp() {
   return (
     <div className="gafe-user-app">
-      <h1>Create New User</h1>
-      <EditUserForm />
+      <Routes>
+        <Route path="/" element={<UserListPage />} />
+        <Route path="/users/:id" element={<UserPage />} />
+      </Routes>
     </div>
   );
 }

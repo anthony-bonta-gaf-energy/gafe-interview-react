@@ -1,0 +1,27 @@
+.user-list-page {
+  --table-border: 0.0625rem solid #2f2f2f;
+  --table-cell-padding: 0.25rem;
+}
+
+.user-list-page > table {
+  border: var(--table-border);
+  border-collapse: collapse;
+  box-sizing: border-box;
+  margin-top: 1rem;
+}
+
+.user-list-page > table > tbody > tr > td,
+.user-list-page > table > thead > tr > th {
+  border-left: var(--table-border);
+  padding: var(--table-cell-padding);
+}
+
+.user-list-page > table > tbody > tr:first-child(td),
+.user-list-page > table > thead > tr:first-child(th) {
+  border-left: none;
+}
+
+.user-list-page > table tr {
+  border-top: var(--table-border);
+  border-bottom: var(--table-border);
+}
