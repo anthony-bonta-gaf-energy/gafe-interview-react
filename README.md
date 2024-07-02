@@ -78,7 +78,7 @@ updating an existing user if they exist.
 
 _Scenario_: Allow me to fill out the form\
 **Then** I should see an empty user form\
-**And** I should be able to enter in the information for &lt;Field&gt of type &lt;Type&gt;\
+**And** I should be able to enter in the information for &lt;Field&gt; of type &lt;Type&gt;\
 **Examples**:
 
 | Field        | MapsTo      | Type     |
@@ -92,8 +92,8 @@ _Scenario_: Allow me to fill out the form\
 _Scenario_: Disable the save button when a required field is not entered\
 **And** I fill out 0 or more fields\
 **And** I don't fill out &lt;RequiredField&gt;\
-**Then** the save button should be disabled
-**Examples**:\
+**Then** the save button should be disabled\
+**Examples**:
 
 | RequiredField |
 | ------------- |
