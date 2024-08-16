@@ -54,7 +54,7 @@ To run the application, clone, install and start the user-web workspace
 
 ```sh
 git clone https://github.com/anthony-bonta-gaf-energy/gafe-interview-react
-cd can-i-has-node
+cd /path/to/gafe-interview-react
 npm ci
 npm --workspace @anthony-bonta-gaf-energy/user-web start
 ```
