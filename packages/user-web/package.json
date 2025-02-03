@@ -5,6 +5,7 @@
   "author": "Anthony Bonta",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/anthony-bonta-gaf-energy/can-i-has-interview",
@@ -25,6 +26,6 @@
     "react-router-dom": "^6.29.0",
     "typescript": "^5.7.3",
     "vite": "^5.4.14",
-    "vitest": "^1.2.2"
+    "vitest": "^3.0.5"
   }
 }
