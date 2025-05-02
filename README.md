@@ -39,7 +39,7 @@ You will need git, node, and an editor of your choice. It is recommended to use 
 brew install git
 brew install visual-studio-code
 # It's recommended to use nvm for node installations (https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating), but you can use this in lieu for the sake of time. Just target the lts version
-brew install node@20
+brew install node@22
 ```
 
 ### Windows
@@ -50,10 +50,12 @@ choco install vscode
 choco install nodejs-lts
 ```
 
+Now fork the repository in your own github. You can always delete this afterwards. The goal here is to try and complete the first feature while keeping the second feature in mind.
+
 To run the application, clone, install and start the user-web workspace
 
 ```sh
-git clone https://github.com/anthony-bonta-gaf-energy/gafe-interview-react
+git clone https://github.com/my-account/gafe-interview-react
 cd /path/to/gafe-interview-react
 npm ci
 npm --workspace @anthony-bonta-gaf-energy/user-web start
@@ -68,7 +70,7 @@ npm test
 ## Frontend Assignment
 
 The assignment is to basically write the UserPage component. The user page is responsible for creating a new user if they do not exist, or
-updating an existing user if they exist.
+updating an existing user if they exist. You don't have to worry about styling any components.
 
 ### Feature: Create a New User
 
@@ -159,3 +161,7 @@ _Scenario_: Cancel the save\
 ## Rules
 
 You can use any resources you want. Use anything that makes you the most productive. You do not have to memorize everything, you are free to do research and look up any way you want to do this.
+
+## Submission
+
+Once you are happy with your solution, push your changes to your branch and send your repository link to anthony.bonta@gaf.energy, OR create a pull request across forks back to the original repository. The choice here is yours.
