@@ -26,6 +26,7 @@
     "react-router-dom": "^7.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.4",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "react-hook-form": "^7.56.4"
   }
 }
