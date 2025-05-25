@@ -7,6 +7,7 @@ export function UserApp() {
     <div className="gafe-user-app">
       <Routes>
         <Route path="/" element={<UserListPage />} />
+        <Route path="/users" element={<UserPage />} />
         <Route path="/users/:id" element={<UserPage />} />
       </Routes>
     </div>

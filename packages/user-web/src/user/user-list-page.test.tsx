@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
@@ -64,7 +64,7 @@ describe('User List Page', () => {
     const actual = history.location.pathname;
 
     // Assert.
-    expect(actual).toEqual('/users/new');
+    expect(actual).toEqual('/users');
   });
 
   it('should navigate to the edit user page when the edit button is clicked', async () => {
@@ -72,6 +72,10 @@ describe('User List Page', () => {
     const target = 'ff899ea1-5397-42b4-996d-f52492e8c835';
     const history = createMemoryHistory();
     const view = await getView({ history });
+
+    await waitFor(() =>
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
+    );
 
     // Act
     await view.clickEditButton(target);
