@@ -1,0 +1,24 @@
+.user-page {
+  form {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+
+    label {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    input, select {
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+  }
+}
