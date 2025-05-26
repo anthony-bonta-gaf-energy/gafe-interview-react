@@ -68,4 +68,16 @@ describe('<UserPage /> – create', () => {
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(window.location.pathname).toBe('/');
   });
+
+  it('should show error after touching and leaving a required field', async () => {
+    renderPage();
+
+    const firstNameInput = screen.getByLabelText(/First Name/i);
+    firstNameInput.focus();
+    firstNameInput.blur();
+
+    await waitFor(() => {
+      expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
+    });
+  });
 });

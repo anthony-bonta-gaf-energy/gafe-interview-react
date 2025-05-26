@@ -11,10 +11,10 @@ export function UserPage() {
   const {
     register,
     handleSubmit,
-    formState: { isValid, isSubmitting },
+    formState: { isValid, isSubmitting, errors, touchedFields },
     reset,
   } = useForm<Omit<User, 'id'>>({
-    mode: 'onChange',
+    mode: 'onTouched',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -33,20 +33,57 @@ export function UserPage() {
   return (
     <div className={styles['user-page']}>
       <h2>Create User</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <label htmlFor="firstName">
           First Name
-          <input id="firstName" {...register('firstName', { required: true })} />
+          <input
+            id="firstName"
+            {...register('firstName', { required: 'First name is required' })}
+            aria-invalid={!!errors.firstName}
+            aria-describedby={errors.firstName ? 'firstName-error' : undefined}
+          />
+          {touchedFields.firstName && errors.firstName && (
+            <span id="firstName-error" role="alert" className={styles['error-message']}>
+              {errors.firstName.message}
+            </span>
+          )}
         </label>
 
         <label htmlFor="lastName">
           Last Name
-          <input id="lastName" {...register('lastName', { required: true })} />
+          <input
+            id="lastName"
+            {...register('lastName', { required: 'Last name is required' })}
+            aria-invalid={!!errors.lastName}
+            aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+          />
+          {touchedFields.lastName && errors.lastName && (
+            <span id="lastName-error" role="alert" className={styles['error-message']}>
+              {errors.lastName.message}
+            </span>
+          )}
         </label>
 
         <label htmlFor="email">
           Email
-          <input id="email" type="email" {...register('email', { required: true })} />
+          <input
+            id="email"
+            type="email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Invalid email address',
+              },
+            })}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'email-error' : undefined}
+          />
+          {touchedFields.email && errors.email && (
+            <span id="email-error" role="alert" className={styles['error-message']}>
+              {errors.email.message}
+            </span>
+          )}
         </label>
 
         <label htmlFor="phoneNumber">
@@ -56,10 +93,20 @@ export function UserPage() {
 
         <label htmlFor="type">
           Type
-          <select id="type" {...register('type', { required: true })}>
+          <select
+            id="type"
+            {...register('type', { required: 'Type is required' })}
+            aria-invalid={!!errors.type}
+            aria-describedby={errors.type ? 'type-error' : undefined}
+          >
             <option value={UserType.Basic}>Basic</option>
             <option value={UserType.Admin}>Admin</option>
           </select>
+          {touchedFields.type && errors.type && (
+            <span id="type-error" role="alert" className={styles['error-message']}>
+              {errors.type.message}
+            </span>
+          )}
         </label>
 
         <div className={styles['button-group']}>
