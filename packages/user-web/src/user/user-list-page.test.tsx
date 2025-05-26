@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -10,10 +10,7 @@ interface GetViewArgs {
 }
 describe('User List Page', () => {
   const getView = (args?: GetViewArgs) => {
-    const $args = {
-      history: createMemoryHistory(),
-      ...args,
-    };
+    const $args = { history: createMemoryHistory(), ...args };
 
     const target = render(
       <Router location={$args.history.location} navigator={$args.history}>
@@ -22,15 +19,22 @@ describe('User List Page', () => {
     );
 
     const getCell = (row: string, col: string) =>
-      Promise.resolve(
-        target.container.querySelector<HTMLTableCellElement>(
-          `table tr[data-row="${row}"] td[data-col="${col}"]`,
-        ),
+      target.container.querySelector<HTMLTableCellElement>(
+        `table tr[data-row="${row}"] td[data-col="${col}"]`,
       );
 
     const getEditButton = async (id: string) => {
-      const cell = await getCell(id, 'actions');
-      return cell?.querySelector<HTMLButtonElement>('button');
+      await waitFor(() => {
+        expect(
+          target.container.querySelector<HTMLButtonElement>(
+            `table tr[data-row="${id}"] td[data-col="actions"] button`,
+          ),
+        ).toBeTruthy();
+      });
+
+      return target.container.querySelector<HTMLButtonElement>(
+        `table tr[data-row="${id}"] td[data-col="actions"] button`,
+      );
     };
 
     const clickEditButton = async (id: string) => {
@@ -47,37 +51,29 @@ describe('User List Page', () => {
 
     return Promise.resolve({
       getCell,
-      getCreateUserButton,
-      clickCreateButton,
       getEditButton,
       clickEditButton,
+      getCreateUserButton,
+      clickCreateButton,
     });
   };
 
-  it('should navigate to the create user page when the create button is clicked', async () => {
-    // Arrange.
+  it('navigates to /users/new when the create button is clicked', async () => {
     const history = createMemoryHistory();
     const view = await getView({ history });
 
-    // Act.
     await view.clickCreateButton();
-    const actual = history.location.pathname;
 
-    // Assert.
-    expect(actual).toEqual('/users/new');
+    expect(history.location.pathname).toEqual('/users/new');
   });
 
-  // it('should navigate to the edit user page when the edit button is clicked', async () => {
-  //   // Arrange.
-  //   const target = 'ff899ea1-5397-42b4-996d-f52492e8c835';
-  //   const history = createMemoryHistory();
-  //   const view = await getView({ history });
+  it('navigates to /users/:id when the edit button is clicked', async () => {
+    const targetId = 'ff899ea1-5397-42b4-996d-f52492e8c835';
+    const history = createMemoryHistory();
+    const view = await getView({ history });
 
-  //   // Act
-  //   await view.clickEditButton(target);
-  //   const actual = history.location.pathname;
+    await view.clickEditButton(targetId);
 
-  //   // Assert.
-  //   expect(actual).toEqual(`/users/${target}`);
-  // });
+    expect(history.location.pathname).toEqual(`/users/${targetId}`);
+  });
 });
