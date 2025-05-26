@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   createUser as apiCreateUser,
   getUser as apiGetUser,
-  updateUser as apiUpdateUser,
+  patchUser as apiPatchUser,
+  buildPatch,
   getUsers,
 } from '../user/api/user-api';
 import { User } from '../user/user.mjs';
@@ -44,7 +45,12 @@ export function useUsers() {
   };
 
   const updateUser = async (user: User) => {
-    return await apiUpdateUser(user);
+    if (!selectedUser) return user;
+    const diff = buildPatch(selectedUser, user);
+    if (Object.keys(diff).length === 0) return selectedUser;
+    const updated = await apiPatchUser(user.id!, diff);
+    setSelectedUser(updated);
+    return updated;
   };
 
   useEffect(() => {
@@ -56,7 +62,6 @@ export function useUsers() {
     selectedUser,
     loading,
     error,
-
     refresh,
     getUser,
     createUser,

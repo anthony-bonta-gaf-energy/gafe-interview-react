@@ -21,7 +21,6 @@ describe('<UserPage /> – create', () => {
 
   it('shows an empty form and Save disabled initially', async () => {
     renderCreate();
-
     await waitFor(() => {
       expect(screen.getByLabelText(/First Name/i)).toHaveValue('');
       expect(screen.getByLabelText(/Last Name/i)).toHaveValue('');
@@ -32,26 +31,20 @@ describe('<UserPage /> – create', () => {
 
   it('enables Save when the form becomes valid', async () => {
     renderCreate();
-
     await userEvent.type(screen.getByLabelText(/First Name/i), 'Jane');
     await userEvent.type(screen.getByLabelText(/Last Name/i), 'Doe');
     await userEvent.type(screen.getByLabelText(/Email/i), 'jane@example.com');
-
     expect(screen.getByRole('button', { name: /Save/i })).toBeEnabled();
   });
 
   it('calls createUser and redirects when Save is clicked', async () => {
     const mockCreate = vi.fn().mockResolvedValue({ id: '1' });
     vi.spyOn(api, 'createUser').mockImplementation(mockCreate);
-
     renderCreate();
-
     await userEvent.type(screen.getByLabelText(/First Name/i), 'Jane');
     await userEvent.type(screen.getByLabelText(/Last Name/i), 'Doe');
     await userEvent.type(screen.getByLabelText(/Email/i), 'jane@example.com');
-
     await userEvent.click(screen.getByRole('button', { name: /Save/i }));
-
     await waitFor(() => {
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -66,18 +59,15 @@ describe('<UserPage /> – create', () => {
 
   it('returns to list when Cancel is clicked', async () => {
     renderCreate();
-
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(window.location.pathname).toBe('/');
   });
 
   it('shows error after blur on a required field', async () => {
     renderCreate();
-
     const firstNameInput = screen.getByLabelText(/First Name/i);
     firstNameInput.focus();
     firstNameInput.blur();
-
     await waitFor(() => {
       expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
     });
@@ -97,7 +87,10 @@ describe('<UserPage /> – edit', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(api, 'getUser').mockResolvedValue(existing);
-    vi.spyOn(api, 'updateUser').mockImplementation(async u => u);
+    vi.spyOn(api, 'patchUser').mockImplementation(async (_id, diff) => ({
+      ...existing,
+      ...diff,
+    }));
   });
 
   const renderEdit = () =>
@@ -112,55 +105,48 @@ describe('<UserPage /> – edit', () => {
 
   it('prefills the form and keeps Save disabled when clean', async () => {
     renderEdit();
-
     await waitFor(() => {
       expect(screen.getByLabelText(/First Name/i)).toHaveValue('Tom');
     });
-
     expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
   });
 
   it('enables Save when a field changes and disables when reverted', async () => {
     renderEdit();
     const firstName = await screen.findByLabelText(/First Name/i);
-
     await userEvent.clear(firstName);
     await userEvent.type(firstName, 'Thomas');
     expect(screen.getByRole('button', { name: /Save/i })).toBeEnabled();
-
     await userEvent.clear(firstName);
     await userEvent.type(firstName, 'Tom');
     expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
   });
 
-  it('calls updateUser and redirects on successful save', async () => {
+  it('does not call patchUser if form is reverted to original', async () => {
+    const patchMock = vi.spyOn(api, 'patchUser');
     renderEdit();
-    const lastName = await screen.findByLabelText(/Last Name/i);
+    const firstName = await screen.findByLabelText(/First Name/i);
 
-    await userEvent.clear(lastName);
-    await userEvent.type(lastName, 'Sawyer-Jr');
+    await userEvent.clear(firstName);
+    await userEvent.type(firstName, 'Thomas');
+
+    await userEvent.clear(firstName);
+    await userEvent.type(firstName, 'Tom');
+
     await userEvent.click(screen.getByRole('button', { name: /Save/i }));
 
     await waitFor(() => {
-      expect(api.updateUser).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: existing.id,
-          lastName: expect.stringContaining('Sawyer-Jr'),
-        }),
-      );
-      expect(window.location.pathname).toBe('/');
+      expect(patchMock).not.toHaveBeenCalled();
     });
   });
 
   it('returns to list on Cancel without saving', async () => {
     renderEdit();
-
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
     });
-
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
-    expect(api.updateUser).not.toHaveBeenCalled();
+    expect(api.patchUser).not.toHaveBeenCalled();
     expect(window.location.pathname).toBe('/');
   });
 });
