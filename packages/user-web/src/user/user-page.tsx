@@ -10,7 +10,7 @@ export function UserPage() {
   const { id } = useParams();
   const isEdit = !!id;
 
-  const { createUser, updateUser, getUser, selectedUser } = useUsers();
+  const { createUser, updateUser, getUser, selectedUser, loading } = useUsers();
 
   const {
     register,
@@ -47,6 +47,10 @@ export function UserPage() {
     }
     navigate('/');
   };
+
+  if (loading && isEdit) {
+    return <div className={styles['loading']}>Loading user data...</div>;
+  }
 
   return (
     <div className={styles['user-page']}>
