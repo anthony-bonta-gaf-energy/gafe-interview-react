@@ -1,14 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from './api/user-api';
 import { UserPage } from './user-page';
+import { UserType } from './user.mjs';
 
 vi.mock('./api/user-api');
 
 describe('<UserPage /> – create', () => {
-  const renderPage = () =>
+  const renderCreate = () =>
     render(
       <MemoryRouter initialEntries={['/users/new']}>
         <Routes>
@@ -18,8 +19,8 @@ describe('<UserPage /> – create', () => {
       </MemoryRouter>,
     );
 
-  it('should show empty form with save disabled initially', async () => {
-    renderPage();
+  it('shows an empty form and Save disabled initially', async () => {
+    renderCreate();
 
     await waitFor(() => {
       expect(screen.getByLabelText(/First Name/i)).toHaveValue('');
@@ -29,8 +30,8 @@ describe('<UserPage /> – create', () => {
     });
   });
 
-  it('should enable save when form is valid', async () => {
-    renderPage();
+  it('enables Save when the form becomes valid', async () => {
+    renderCreate();
 
     await userEvent.type(screen.getByLabelText(/First Name/i), 'Jane');
     await userEvent.type(screen.getByLabelText(/Last Name/i), 'Doe');
@@ -39,11 +40,11 @@ describe('<UserPage /> – create', () => {
     expect(screen.getByRole('button', { name: /Save/i })).toBeEnabled();
   });
 
-  it('should call createUser and redirect when Save clicked', async () => {
+  it('calls createUser and redirects when Save is clicked', async () => {
     const mockCreate = vi.fn().mockResolvedValue({ id: '1' });
     vi.spyOn(api, 'createUser').mockImplementation(mockCreate);
 
-    renderPage();
+    renderCreate();
 
     await userEvent.type(screen.getByLabelText(/First Name/i), 'Jane');
     await userEvent.type(screen.getByLabelText(/Last Name/i), 'Doe');
@@ -59,18 +60,19 @@ describe('<UserPage /> – create', () => {
           email: 'jane@example.com',
         }),
       );
+      expect(window.location.pathname).toBe('/');
     });
   });
 
-  it('should go back when Cancel clicked', async () => {
-    renderPage();
+  it('returns to list when Cancel is clicked', async () => {
+    renderCreate();
 
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(window.location.pathname).toBe('/');
   });
 
-  it('should show error after touching and leaving a required field', async () => {
-    renderPage();
+  it('shows error after blur on a required field', async () => {
+    renderCreate();
 
     const firstNameInput = screen.getByLabelText(/First Name/i);
     firstNameInput.focus();
@@ -79,5 +81,82 @@ describe('<UserPage /> – create', () => {
     await waitFor(() => {
       expect(screen.getByText(/First name is required/i)).toBeInTheDocument();
     });
+  });
+});
+
+describe('<UserPage /> – edit', () => {
+  const existing = {
+    id: 'ff899ea1-5397-42b4-996d-f52492e8c835',
+    firstName: 'Tom',
+    lastName: 'Sawyer',
+    email: 'tom@email.fake',
+    phoneNumber: '+1-214-555-7294',
+    type: UserType.Basic,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(api, 'getUser').mockResolvedValue(existing);
+    vi.spyOn(api, 'updateUser').mockImplementation(async u => u);
+  });
+
+  const renderEdit = () =>
+    render(
+      <MemoryRouter initialEntries={[`/users/${existing.id}`]}>
+        <Routes>
+          <Route path="/" element={<div>Home</div>} />
+          <Route path="/users/:id" element={<UserPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+  it('prefills the form and keeps Save disabled when clean', async () => {
+    renderEdit();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/First Name/i)).toHaveValue('Tom');
+    });
+
+    expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
+  });
+
+  it('enables Save when a field changes and disables when reverted', async () => {
+    renderEdit();
+    const firstName = await screen.findByLabelText(/First Name/i);
+
+    await userEvent.clear(firstName);
+    await userEvent.type(firstName, 'Thomas');
+    expect(screen.getByRole('button', { name: /Save/i })).toBeEnabled();
+
+    await userEvent.clear(firstName);
+    await userEvent.type(firstName, 'Tom');
+    expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
+  });
+
+  it('calls updateUser and redirects on successful save', async () => {
+    renderEdit();
+    const lastName = await screen.findByLabelText(/Last Name/i);
+
+    await userEvent.clear(lastName);
+    await userEvent.type(lastName, 'Sawyer-Jr');
+    await userEvent.click(screen.getByRole('button', { name: /Save/i }));
+
+    await waitFor(() => {
+      expect(api.updateUser).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: existing.id,
+          lastName: expect.stringContaining('Sawyer-Jr'),
+        }),
+      );
+      expect(window.location.pathname).toBe('/');
+    });
+  });
+
+  it('returns to list on Cancel without saving', async () => {
+    renderEdit();
+
+    await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+    expect(api.updateUser).not.toHaveBeenCalled();
+    expect(window.location.pathname).toBe('/');
   });
 });

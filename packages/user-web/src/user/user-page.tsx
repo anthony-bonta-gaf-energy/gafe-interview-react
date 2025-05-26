@@ -1,17 +1,21 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useUsers } from '../hooks/use-users';
 import styles from './user-page.module.css';
 import { User, UserType } from './user.mjs';
 
 export function UserPage() {
   const navigate = useNavigate();
-  const { createUser } = useUsers();
+  const { id } = useParams();
+  const isEdit = !!id;
+
+  const { createUser, updateUser, getUser, selectedUser } = useUsers();
 
   const {
     register,
     handleSubmit,
-    formState: { isValid, isSubmitting, errors, touchedFields },
+    formState: { isValid, isSubmitting, isDirty, errors, touchedFields },
     reset,
   } = useForm<Omit<User, 'id'>>({
     mode: 'onTouched',
@@ -24,15 +28,29 @@ export function UserPage() {
     },
   });
 
+  useEffect(() => {
+    if (isEdit && id) getUser(id);
+  }, [isEdit, id, getUser]);
+
+  useEffect(() => {
+    if (selectedUser && isEdit) {
+      const { id: _discard, ...rest } = selectedUser;
+      reset(rest);
+    }
+  }, [selectedUser, isEdit, reset]);
+
   const onSubmit = async (data: Omit<User, 'id'>) => {
-    await createUser(data);
-    reset();
+    if (isEdit && id) {
+      await updateUser({ ...data, id });
+    } else {
+      await createUser(data);
+    }
     navigate('/');
   };
 
   return (
     <div className={styles['user-page']}>
-      <h2>Create User</h2>
+      <h2>{isEdit ? 'Edit User' : 'Create User'}</h2>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <label htmlFor="firstName">
           First Name
@@ -110,7 +128,7 @@ export function UserPage() {
         </label>
 
         <div className={styles['button-group']}>
-          <button type="submit" disabled={!isValid || isSubmitting}>
+          <button type="submit" disabled={!isValid || isSubmitting || (isEdit && !isDirty)}>
             Save
           </button>
           <button type="button" onClick={() => navigate('/')}>
