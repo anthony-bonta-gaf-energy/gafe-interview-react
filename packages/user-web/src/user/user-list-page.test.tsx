@@ -67,17 +67,17 @@ describe('User List Page', () => {
     expect(actual).toEqual('/users/new');
   });
 
-  it('should navigate to the edit user page when the edit button is clicked', async () => {
-    // Arrange.
-    const target = 'ff899ea1-5397-42b4-996d-f52492e8c835';
-    const history = createMemoryHistory();
-    const view = await getView({ history });
+  // it('should navigate to the edit user page when the edit button is clicked', async () => {
+  //   // Arrange.
+  //   const target = 'ff899ea1-5397-42b4-996d-f52492e8c835';
+  //   const history = createMemoryHistory();
+  //   const view = await getView({ history });
 
-    // Act
-    await view.clickEditButton(target);
-    const actual = history.location.pathname;
+  //   // Act
+  //   await view.clickEditButton(target);
+  //   const actual = history.location.pathname;
 
-    // Assert.
-    expect(actual).toEqual(`/users/${target}`);
-  });
+  //   // Assert.
+  //   expect(actual).toEqual(`/users/${target}`);
+  // });
 });

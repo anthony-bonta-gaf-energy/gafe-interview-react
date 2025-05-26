@@ -155,6 +155,10 @@ describe('<UserPage /> – edit', () => {
   it('returns to list on Cancel without saving', async () => {
     renderEdit();
 
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+    });
+
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(api.updateUser).not.toHaveBeenCalled();
     expect(window.location.pathname).toBe('/');

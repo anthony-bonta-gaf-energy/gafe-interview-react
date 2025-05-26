@@ -29,33 +29,18 @@ export function UserListPage() {
             </tr>
           </thead>
           <tbody>
-            <tr data-row="ff899ea1-5397-42b4-996d-f52492e8c835">
-              <td data-col="first-name">Tom</td>
-              <td data-col="last-name">Sawyer</td>
-              <td data-col="phone-number">+1-214-555-7294</td>
-              <td data-col="email">tom@email.fake</td>
-              <td data-col="type">Basic</td>
-              <td data-col="actions">
-                <button onClick={handleEditUser.bind(null, 'ff899ea1-5397-42b4-996d-f52492e8c835')}>
-                  Edit
-                </button>
-              </td>
-            </tr>
-
-            {users
-              .filter(u => u.id !== 'ff899ea1-5397-42b4-996d-f52492e8c835')
-              .map(u => (
-                <tr key={u.id} data-row={u.id}>
-                  <td data-col="first-name">{u.firstName}</td>
-                  <td data-col="last-name">{u.lastName}</td>
-                  <td data-col="phone-number">{u.phoneNumber}</td>
-                  <td data-col="email">{u.email}</td>
-                  <td data-col="type">{u.type}</td>
-                  <td data-col="actions">
-                    <button onClick={() => handleEditUser(u.id!)}>Edit</button>
-                  </td>
-                </tr>
-              ))}
+            {users.map(u => (
+              <tr key={u.id} data-row={u.id}>
+                <td data-col="first-name">{u.firstName}</td>
+                <td data-col="last-name">{u.lastName}</td>
+                <td data-col="phone-number">{u.phoneNumber}</td>
+                <td data-col="email">{u.email}</td>
+                <td data-col="type">{u.type}</td>
+                <td data-col="actions">
+                  <button onClick={() => handleEditUser(u.id!)}>Edit</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}
