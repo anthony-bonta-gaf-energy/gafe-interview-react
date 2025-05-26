@@ -4,3 +4,16 @@
   gap: 1rem;
   max-width: 400px;
 }
+
+.user-page label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  gap: 0.25rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

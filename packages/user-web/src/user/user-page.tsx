@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useUsers } from '../hooks/use-users';
+import styles from './user-page.module.css';
 import { User, UserType } from './user.mjs';
 
 export function UserPage() {
@@ -30,38 +31,45 @@ export function UserPage() {
   };
 
   return (
-    <div className="user-page">
+    <div className={styles['user-page']}>
       <h2>Create User</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label>
+        <label htmlFor="firstName">
           First Name
-          <input {...register('firstName', { required: true })} />
+          <input id="firstName" {...register('firstName', { required: true })} />
         </label>
-        <label>
+
+        <label htmlFor="lastName">
           Last Name
-          <input {...register('lastName', { required: true })} />
+          <input id="lastName" {...register('lastName', { required: true })} />
         </label>
-        <label>
+
+        <label htmlFor="email">
           Email
-          <input type="email" {...register('email', { required: true })} />
+          <input id="email" type="email" {...register('email', { required: true })} />
         </label>
-        <label>
+
+        <label htmlFor="phoneNumber">
           Phone Number
-          <input type="tel" {...register('phoneNumber')} />
+          <input id="phoneNumber" type="tel" {...register('phoneNumber')} />
         </label>
-        <label>
+
+        <label htmlFor="type">
           Type
-          <select {...register('type', { required: true })}>
+          <select id="type" {...register('type', { required: true })}>
             <option value={UserType.Basic}>Basic</option>
             <option value={UserType.Admin}>Admin</option>
           </select>
         </label>
-        <button type="submit" disabled={!isValid || isSubmitting}>
-          Save
-        </button>
-        <button type="button" onClick={() => navigate('/')}>
-          Cancel
-        </button>
+
+        <div className={styles['button-group']}>
+          <button type="submit" disabled={!isValid || isSubmitting}>
+            Save
+          </button>
+          <button type="button" onClick={() => navigate('/')}>
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

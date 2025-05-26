@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router';
+import { useUsers } from '../hooks/use-users';
 import styles from './user-list-page.module.css';
 
 export function UserListPage() {
   const navigate = useNavigate();
+  const { users, loading } = useUsers();
 
   const handleCreateUser = () => navigate('/users/new');
   const handleEditUser = (id: string) => navigate(`/users/${id}`);
@@ -11,6 +13,7 @@ export function UserListPage() {
     <div className={styles['user-list-page']}>
       <h2>Users</h2>
       <button onClick={handleCreateUser}>Create New User</button>
+
       <table>
         <thead>
           <tr>
@@ -23,6 +26,12 @@ export function UserListPage() {
           </tr>
         </thead>
         <tbody>
+          {loading && (
+            <tr>
+              <td colSpan={6}>Loading...</td>
+            </tr>
+          )}
+
           <tr data-row="ff899ea1-5397-42b4-996d-f52492e8c835">
             <td data-col="first-name">Tom</td>
             <td data-col="last-name">Sawyer</td>
@@ -35,6 +44,21 @@ export function UserListPage() {
               </button>
             </td>
           </tr>
+
+          {users
+            .filter(u => u.id !== 'ff899ea1-5397-42b4-996d-f52492e8c835')
+            .map(u => (
+              <tr key={u.id} data-row={u.id}>
+                <td data-col="first-name">{u.firstName}</td>
+                <td data-col="last-name">{u.lastName}</td>
+                <td data-col="phone-number">{u.phoneNumber}</td>
+                <td data-col="email">{u.email}</td>
+                <td data-col="type">{u.type}</td>
+                <td data-col="actions">
+                  <button onClick={() => handleEditUser(u.id!)}>Edit</button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

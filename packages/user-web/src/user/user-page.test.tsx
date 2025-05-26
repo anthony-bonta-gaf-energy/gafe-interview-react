@@ -18,13 +18,15 @@ describe('<UserPage /> – create', () => {
       </MemoryRouter>,
     );
 
-  it('should show empty form with save disabled initially', () => {
+  it('should show empty form with save disabled initially', async () => {
     renderPage();
 
-    expect(screen.getByLabelText(/First Name/i)).toHaveValue('');
-    expect(screen.getByLabelText(/Last Name/i)).toHaveValue('');
-    expect(screen.getByLabelText(/Email/i)).toHaveValue('');
-    expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/First Name/i)).toHaveValue('');
+      expect(screen.getByLabelText(/Last Name/i)).toHaveValue('');
+      expect(screen.getByLabelText(/Email/i)).toHaveValue('');
+      expect(screen.getByRole('button', { name: /Save/i })).toBeDisabled();
+    });
   });
 
   it('should enable save when form is valid', async () => {
