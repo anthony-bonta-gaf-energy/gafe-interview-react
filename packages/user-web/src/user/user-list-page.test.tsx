@@ -1,13 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { userInstance } from '../controllers/Users';
 import { UserListPage } from './user-list-page';
+import { UserType } from './user.mjs';
 
 interface GetViewArgs {
   history: History;
 }
+vi.mock('../controllers/Users', () => ({
+  userInstance: {
+    getUsers: vi.fn(),
+  },
+}));
+
 describe('User List Page', () => {
   const getView = (args?: GetViewArgs) => {
     const $args = {
@@ -69,12 +77,25 @@ describe('User List Page', () => {
 
   it('should navigate to the edit user page when the edit button is clicked', async () => {
     // Arrange.
+    vi.mocked(userInstance.getUsers).mockResolvedValue([
+      {
+        id: 'ff899ea1-5397-42b4-996d-f52492e8c835',
+        firstName: 'Tom',
+        lastName: 'Sawyer',
+        email: 'tom@email.fake',
+        phoneNumber: '+1-214-555-7294',
+        type: UserType.Basic,
+      },
+    ]);
+
     const target = 'ff899ea1-5397-42b4-996d-f52492e8c835';
     const history = createMemoryHistory();
-    const view = await getView({ history });
+    await getView({ history });
+
+    const getEditButton = await screen.findByTestId(`edit-button-${target}`);
 
     // Act
-    await view.clickEditButton(target);
+    fireEvent.click(getEditButton);
     const actual = history.location.pathname;
 
     // Assert.

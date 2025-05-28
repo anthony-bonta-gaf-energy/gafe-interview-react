@@ -1,8 +1,10 @@
 {
   "extends": "./.config/.tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext",
     "baseUrl": "packages",
-    "target": "esnext"
+    "target": "esnext",
+    "moduleResolution": "bundler"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"]
 }

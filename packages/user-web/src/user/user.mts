@@ -10,3 +10,7 @@ export interface User {
   phoneNumber: string;
   type: UserType;
 }
+
+export interface ExistingUser extends User {
+  id: string;
+}

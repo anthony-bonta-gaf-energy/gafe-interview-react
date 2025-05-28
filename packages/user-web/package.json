@@ -16,6 +16,7 @@
     "start": "vite"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "history": "^5.3.0",
@@ -27,5 +28,13 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.4",
     "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@tailwindcss/vite": "^4.1.7",
+    "react-hook-form": "^7.56.4",
+    "tailwindcss": "^4.1.7",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.30"
   }
 }
