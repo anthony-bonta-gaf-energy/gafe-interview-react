@@ -1,23 +1,14 @@
 import Button from '@/components/Button';
-import { useCallback, useState } from 'react';
+import type { User } from '@/services/users';
+import { getAllUsers } from '@/services/users';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styles from './user-list-page.module.css';
 
-// Define user data outside the component
-const initialUsers = [
-  {
-    id: 'ff899ea1-5397-42b4-996d-f52492e8c835',
-    firstName: 'Tom',
-    lastName: 'Sawyer',
-    phoneNumber: '+1-214-555-7294',
-    email: 'tom@email.fake',
-    type: 'Basic',
-  },
-];
-
 export function UserListPage() {
   const navigate = useNavigate();
-  const [users] = useState(initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleCreateUser = useCallback(() => navigate('/users/new'), [navigate]);
   const handleEditUser = useCallback((id: string) => navigate(`/users/${id}`), [navigate]);
@@ -47,35 +38,60 @@ export function UserListPage() {
     [users],
   );
 
+  const handleFetchUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const fetchedUsers = await getAllUsers();
+      setUsers(fetchedUsers);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    handleFetchUsers();
+  }, []);
+
   return (
     <div className={styles['user-list-page']}>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Users</h1>
       <Button color="blue" text="Create New User" onClick={handleCreateUser} />
-      <table className="w-full mt-6 border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="text-left py-2 px-4 border-b" data-col="first-name">
-              First Name
-            </th>
-            <th className="text-left py-2 px-4 border-b" data-col="last-name">
-              Last Name
-            </th>
-            <th className="text-left py-2 px-4 border-b" data-col="phone-number">
-              Phone Number
-            </th>
-            <th className="text-left py-2 px-4 border-b" data-col="email">
-              Email
-            </th>
-            <th className="text-left py-2 px-4 border-b" data-col="type">
-              Type
-            </th>
-            <th className="text-left py-2 px-4 border-b" data-col="actions">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>{renderUsers()}</tbody>
-      </table>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center my-6">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 animate-pulse">
+            Loading users...
+          </h2>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
+        <table className="w-full mt-6 border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-left py-2 px-4 border-b" data-col="first-name">
+                First Name
+              </th>
+              <th className="text-left py-2 px-4 border-b" data-col="last-name">
+                Last Name
+              </th>
+              <th className="text-left py-2 px-4 border-b" data-col="phone-number">
+                Phone Number
+              </th>
+              <th className="text-left py-2 px-4 border-b" data-col="email">
+                Email
+              </th>
+              <th className="text-left py-2 px-4 border-b" data-col="type">
+                Type
+              </th>
+              <th className="text-left py-2 px-4 border-b" data-col="actions">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>{renderUsers()}</tbody>
+        </table>
+      )}
     </div>
   );
 }
