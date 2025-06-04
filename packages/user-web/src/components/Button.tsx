@@ -34,12 +34,11 @@ const Button: React.FC<ButtonProps> = ({
   color = '',
   children = null,
 }) => {
-  // const baseStyles = 'rounded font-medium focus:outline-none';
   const buttonColor = BUTTON_COLOR_MAP[color] || DEFAULT_BUTTON_COLOR; // Default color
   return (
     <button
       type={type}
-      className={`text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline ${className}`}
+      className={`text-white font-medium py-2 px-4 cursor-pointer rounded focus:outline-none focus:shadow-outline ${buttonColor} ${className}`}
       onClick={onClick}
       disabled={disabled}
     >

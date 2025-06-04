@@ -17,7 +17,8 @@
     "clean": "rimraf --glob 'coverage' '*.tgz' '*.log' 'packages/**/dist' 'packages/**/*.tgz' 'packages/**/*.log' 'packages/**/stats'",
     "test": "vitest run --coverage",
     "build": "lerna run build",
-    "make": "npm run clean && npm run test && npm run build"
+    "make": "npm run clean && npm run test && npm run build",
+    "start": "npm --workspace @anthony-bonta-gaf-energy/user-web start"
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.7",

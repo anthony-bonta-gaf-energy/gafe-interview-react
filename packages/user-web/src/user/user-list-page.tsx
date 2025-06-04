@@ -1,4 +1,4 @@
-import Button from '@/Button';
+import Button from '@/components/Button';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import styles from './user-list-page.module.css';
@@ -51,13 +51,7 @@ export function UserListPage() {
   return (
     <div className={styles['user-list-page']}>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Users</h1>
-      <Button
-        text="Create New User"
-        onClick={handleCreateUser}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      />
-      {/* </button> */}
-      {/* <Button text="aver al cine wey" /> */}
+      <Button color="blue" text="Create New User" onClick={handleCreateUser} />
       <table>
         <thead>
           <tr>

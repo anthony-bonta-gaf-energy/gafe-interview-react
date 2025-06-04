@@ -5,7 +5,7 @@
     "target": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["user-web/src/components/*"]
+      "@/*": ["user-web/src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"]

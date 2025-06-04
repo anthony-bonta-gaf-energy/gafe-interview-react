@@ -11,7 +11,7 @@ export function defineWeb() {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '../packages/user-web/src/components'),
+        '@': path.resolve(__dirname, '../packages/user-web/src'),
         lodash: 'lodash-es',
       },
     },
