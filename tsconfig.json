@@ -3,7 +3,10 @@
   "compilerOptions": {
     "baseUrl": "packages",
     "target": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["user-web/src/components/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"]
 }
