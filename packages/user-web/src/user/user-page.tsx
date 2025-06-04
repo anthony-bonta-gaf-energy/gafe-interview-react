@@ -1,12 +1,17 @@
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
+import { useUser } from '@/contexts/User';
 import type { User } from '@/services/users';
 import { UserType } from '@/utils/constants';
-import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 function UserPage() {
+  const params = useParams();
+  const userId = params.id;
+  const { users } = useUser();
+
   const [formData, setFormData] = useState<User>({
     firstName: '',
     lastName: '',
@@ -26,8 +31,22 @@ function UserPage() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Form submitted', formData);
+
+    if (userId === 'new') {
+      return console.log('New User Created', { ...formData });
+    }
+
+    return console.log('User updated', { ...formData, id: userId });
   };
+
+  useEffect(() => {
+    if (userId) {
+      const foundUser = users.find(user => user.id === userId);
+      if (foundUser) {
+        setFormData({ ...foundUser });
+      }
+    }
+  }, [userId]);
 
   const isFormDisabled = !formData.firstName || !formData.lastName || !formData.email;
 
@@ -81,7 +100,7 @@ function UserPage() {
           ))}
         </Select>
         <Button
-          text="Save"
+          text={userId === 'new' ? 'Create User' : 'Update User'}
           type="submit"
           disabled={isFormDisabled}
           color="blue"

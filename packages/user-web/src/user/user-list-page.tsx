@@ -2,11 +2,13 @@ import Button from '@/components/Button';
 import { useUser } from '@/contexts/User';
 import { getAllUsers } from '@/services/users';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import styles from './user-list-page.module.css';
 
 export function UserListPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [loading, setLoading] = useState(true);
   const { users, saveUsers } = useUser();
 
@@ -16,7 +18,7 @@ export function UserListPage() {
   const renderUsers = useCallback(
     () =>
       users.map(user => {
-        const editUserHandler = () => handleEditUser(user.id);
+        const editUserHandler = () => handleEditUser(user.id || '');
         return (
           <tr key={user.id} data-row={user.id}>
             <td data-col="first-name">{user.firstName}</td>
