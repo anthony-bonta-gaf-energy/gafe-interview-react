@@ -1,9 +1,10 @@
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
-export function defineWeb(dir: string) {
+export function defineWeb() {
   return defineConfig({
-    plugins: [tsConfigPaths()],
+    plugins: [tsConfigPaths(), tailwindcss()],
     server: {
       strictPort: true,
     },

@@ -2,7 +2,8 @@
   "extends": "./.config/.tsconfig.json",
   "compilerOptions": {
     "baseUrl": "packages",
-    "target": "esnext"
+    "target": "esnext",
+    "moduleResolution": "bundler"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"]
 }
