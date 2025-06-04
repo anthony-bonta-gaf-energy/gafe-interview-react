@@ -1,15 +1,19 @@
+import { UserProvider } from '@/contexts/User';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { UserApp } from './app/user-app';
+
 import './styles.css';
 
 const container = createRoot(document.getElementById('user-app')!);
 
 container.render(
   <StrictMode>
-    <BrowserRouter>
-      <UserApp />
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
+        <UserApp />
+      </BrowserRouter>
+    </UserProvider>
   </StrictMode>,
 );

@@ -1,5 +1,5 @@
 import Button from '@/components/Button';
-import type { User } from '@/services/users';
+import { useUser } from '@/contexts/User';
 import { getAllUsers } from '@/services/users';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -7,8 +7,8 @@ import styles from './user-list-page.module.css';
 
 export function UserListPage() {
   const navigate = useNavigate();
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const { users, saveUsers } = useUser();
 
   const handleCreateUser = useCallback(() => navigate('/users/new'), [navigate]);
   const handleEditUser = useCallback((id: string) => navigate(`/users/${id}`), [navigate]);
@@ -42,7 +42,7 @@ export function UserListPage() {
     setLoading(true);
     try {
       const fetchedUsers = await getAllUsers();
-      setUsers(fetchedUsers);
+      saveUsers(fetchedUsers);
     } catch (error) {
       console.error('Failed to fetch users:', error);
     } finally {
