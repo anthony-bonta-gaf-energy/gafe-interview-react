@@ -9,8 +9,13 @@ export function UserListPage() {
 
   return (
     <div className={styles['user-list-page']}>
-      <h2>Users</h2>
-      <button onClick={handleCreateUser}>Create New User</button>
+      <h2 className="border border-red-500">Users</h2>
+      <button
+        onClick={handleCreateUser}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      >
+        Create New User
+      </button>
       <table>
         <thead>
           <tr>

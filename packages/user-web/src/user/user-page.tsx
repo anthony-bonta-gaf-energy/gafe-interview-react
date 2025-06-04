@@ -1,3 +1,5 @@
-export function UserPage() {
-  return <div className="modify-user-page">User Page</div>;
+function UserPage() {
+  return <div className="modify-user-page">User Pages</div>;
 }
+
+export default UserPage;
