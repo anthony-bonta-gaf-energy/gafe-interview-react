@@ -14,8 +14,8 @@ function UserPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="First Name" required placeholder="Enter first name" />
         <Input label="Last Name" required placeholder="Enter last name" />
-        <Input label="Email" required placeholder="Enter email address" type="email" />
-        <Input label="Phone Number" required placeholder="Enter phone number" type="tel" />
+        <Input label="Phone Number" type="tel" required placeholder="Enter phone number" />
+        <Input label="Email" type="email" required placeholder="Enter email address" />
         <Button
           text="Save"
           type="submit"

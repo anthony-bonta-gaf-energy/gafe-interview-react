@@ -1,4 +1,4 @@
-import { ChangeEvent, InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -15,7 +15,6 @@ const Input = ({
   required = false,
   ...props
 }: InputProps) => {
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {};
   return (
     <div className={`mb-4 ${className}`}>
       {label && (
