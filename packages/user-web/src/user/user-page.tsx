@@ -1,17 +1,18 @@
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
+import type { User } from '@/services/users';
 import { UserType } from '@/utils/constants';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function UserPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<User>({
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
-    userType: UserType.Basic,
+    type: UserType.Basic,
   });
 
   // Handle input changes
@@ -72,7 +73,7 @@ function UserPage() {
           value={formData.email}
           onChange={handleChange}
         />
-        <Select name="userType" label="User Type" value={formData.userType} onChange={handleChange}>
+        <Select name="type" label="User Type" value={formData.type} onChange={handleChange}>
           {Object.entries(UserType).map(([key, value]) => (
             <option key={key} value={value}>
               {key}
