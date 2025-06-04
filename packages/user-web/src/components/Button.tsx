@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import React, { useMemo, type ButtonHTMLAttributes } from 'react';
 
 interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: 'red' | 'green' | 'blue';
@@ -21,9 +21,8 @@ const BUTTON_COLOR_MAP: Record<string, string> = {
   red: 'bg-red-500 hover:bg-red-700 text-white',
   green: 'bg-green-500 hover:bg-green-700 text-white',
   blue: 'bg-blue-500 hover:bg-blue-700 text-white',
+  default: 'bg-slate-500 hover:bg-blue-700 text-white',
 };
-
-const DEFAULT_BUTTON_COLOR = 'bg-slate-500 hover:bg-blue-700 text-white'; // Default color if none is provided
 
 const Button: React.FC<ButtonProps> = ({
   onClick,
@@ -34,11 +33,17 @@ const Button: React.FC<ButtonProps> = ({
   color = '',
   children = null,
 }) => {
-  const buttonColor = BUTTON_COLOR_MAP[color] || DEFAULT_BUTTON_COLOR; // Default color
+  const buttonColorRegularStatus = useMemo(
+    () => BUTTON_COLOR_MAP[color] || BUTTON_COLOR_MAP.default,
+    [color],
+  );
+
   return (
     <button
       type={type}
-      className={`text-white font-medium py-2 px-4 cursor-pointer rounded focus:outline-none focus:shadow-outline ${buttonColor} ${className}`}
+      className={`font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline ${buttonColorRegularStatus} ${
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      } ${className}`}
       onClick={onClick}
       disabled={disabled}
     >

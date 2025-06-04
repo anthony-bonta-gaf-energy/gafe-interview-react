@@ -17,7 +17,6 @@ const initialUsers = [
 
 export function UserListPage() {
   const navigate = useNavigate();
-  // Create state using the initial data
   const [users] = useState(initialUsers);
 
   const handleCreateUser = useCallback(() => navigate('/users/new'), [navigate]);
@@ -35,12 +34,12 @@ export function UserListPage() {
             <td data-col="email">{user.email}</td>
             <td data-col="type">{user.type}</td>
             <td data-col="actions">
-              <button
+              <Button
+                className="text-sm w-8 h-8 p-0 rounded-full flex items-center justify-center hover:bg-gray-200"
                 onClick={editUserHandler}
-                className="bg-gray-100 cursor-pointer hover:bg-gray-300 text-gray-800 font-small py-1 px-3 rounded text-sm transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
-                Edit
-              </button>
+                Edit{' '}
+              </Button>
             </td>
           </tr>
         );
@@ -52,15 +51,27 @@ export function UserListPage() {
     <div className={styles['user-list-page']}>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Users</h1>
       <Button color="blue" text="Create New User" onClick={handleCreateUser} />
-      <table>
+      <table className="w-full mt-6 border-collapse">
         <thead>
-          <tr>
-            <th data-col="first-name">First Name</th>
-            <th data-col="last-name">Last Name</th>
-            <th data-col="phone-number">Phone Number</th>
-            <th data-col="email">Email</th>
-            <th data-col="type">Type</th>
-            <th data-col="actions"></th>
+          <tr className="bg-gray-100">
+            <th className="text-left py-2 px-4 border-b" data-col="first-name">
+              First Name
+            </th>
+            <th className="text-left py-2 px-4 border-b" data-col="last-name">
+              Last Name
+            </th>
+            <th className="text-left py-2 px-4 border-b" data-col="phone-number">
+              Phone Number
+            </th>
+            <th className="text-left py-2 px-4 border-b" data-col="email">
+              Email
+            </th>
+            <th className="text-left py-2 px-4 border-b" data-col="type">
+              Type
+            </th>
+            <th className="text-left py-2 px-4 border-b" data-col="actions">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>{renderUsers()}</tbody>
