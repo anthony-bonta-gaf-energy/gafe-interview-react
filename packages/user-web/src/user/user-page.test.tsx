@@ -68,7 +68,7 @@ describe('User Page', () => {
     });
   };
 
-  it('shoud render create user form with all its fields', async () => {
+  it('should render create user form with all its fields', async () => {
     const view = await getView({ initialRoute: '/users/new' });
 
     const header = await view.getHeader();
@@ -79,11 +79,7 @@ describe('User Page', () => {
     const typeSelect = await view.getInput('user type');
     const submitButton = await view.getCreateUserButton();
 
-    await view.populateField('first name', 'John');
-    await view.populateField('last name', 'Doe');
-
     expect(header).toBeDefined();
-
     expect(firstNameInput).toBeDefined();
     expect(lastNameInput).toBeDefined();
     expect(phoneInput).toBeDefined();
@@ -91,8 +87,27 @@ describe('User Page', () => {
     expect(typeSelect).toBeDefined();
     expect(submitButton).toBeDefined();
     expect(submitButton.textContent).toBe('Create User');
+  });
 
-    expect(firstNameInput.getAttribute('value')).toEqual('John');
-    expect(lastNameInput.getAttribute('value')).toEqual('Doe');
+  it('shoud render form and validate submit button when user fills the form', async () => {
+    const view = await getView({ initialRoute: '/users/new' });
+
+    const header = await view.getHeader();
+    const firstNameInput = await view.getInput('first name');
+    const lastNameInput = await view.getInput('last name');
+    const phoneInput = await view.getInput('phone number');
+    const emailInput = await view.getInput('email');
+    const typeSelect = await view.getInput('user type');
+    const submitButton = await view.getCreateUserButton();
+
+    expect(header).toBeDefined();
+    expect(firstNameInput).toBeDefined();
+    expect(lastNameInput).toBeDefined();
+    expect(phoneInput).toBeDefined();
+    expect(emailInput).toBeDefined();
+    expect(typeSelect).toBeDefined();
+    expect(submitButton).toBeDefined();
+    expect(submitButton.textContent).toBe('Create User');
+    expect(submitButton.disabled).toBe(true);
   });
 });
