@@ -1,8 +1,8 @@
 import { UserProvider } from '@/contexts/User';
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterEach, describe, expect, it } from 'vitest';
 import { UserPage } from './user-page';
 
 const MockUserProvider = ({ children }: { children: React.ReactNode }) => (
@@ -14,22 +14,18 @@ interface GetViewArgs {
 }
 
 describe('User Page', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   const getView = (args?: GetViewArgs) => {
     const $args = {
       initialRoute: '/users/new',
       ...args,
     };
 
-    let currentLocation: ReturnType<typeof useLocation>;
-
-    const LocationCapture = () => {
-      currentLocation = useLocation();
-      return null;
-    };
-
     render(
       <MemoryRouter initialEntries={[$args.initialRoute]}>
-        <LocationCapture />
         <Routes>
           <Route
             path="/users/:id"
@@ -51,8 +47,6 @@ describe('User Page', () => {
 
     const getHeader = () => Promise.resolve(screen.getByRole('heading', { name: /user profile/i }));
 
-    const getCurrentPath = () => currentLocation?.pathname;
-
     const getCreateUserButton = () =>
       Promise.resolve(screen.getByText<HTMLButtonElement>('Create User'));
 
@@ -72,7 +66,6 @@ describe('User Page', () => {
     return Promise.resolve({
       getInput,
       getHeader,
-      getCurrentPath,
       getCreateUserButton,
       populateInput,
       populateSelect,
