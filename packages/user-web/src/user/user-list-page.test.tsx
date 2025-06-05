@@ -3,6 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { describe, expect, it } from 'vitest';
+import { UsersProvider } from './user-context';
 import { UserListPage } from './user-list-page';
 
 interface GetViewArgs {
@@ -16,9 +17,11 @@ describe('User List Page', () => {
     };
 
     const target = render(
-      <Router location={$args.history.location} navigator={$args.history}>
-        <UserListPage />
-      </Router>,
+      <UsersProvider>
+        <Router location={$args.history.location} navigator={$args.history}>
+          <UserListPage />
+        </Router>
+      </UsersProvider>
     );
 
     const getCell = (row: string, col: string) =>
