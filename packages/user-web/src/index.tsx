@@ -10,10 +10,10 @@ const container = createRoot(document.getElementById('user-app')!);
 
 container.render(
   <StrictMode>
-    <UserProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <UserProvider>
         <UserApp />
-      </BrowserRouter>
-    </UserProvider>
+      </UserProvider>
+    </BrowserRouter>
   </StrictMode>,
 );

@@ -4,10 +4,9 @@ import type { User } from '@/services/users';
 import { getUserById, saveUser, updateUser } from '@/services/users';
 import { UserType } from '@/utils/constants';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-function UserPage() {
+export function UserPage() {
   const params = useParams();
   const userId = params.id;
   const { users } = useUser();
@@ -65,9 +64,9 @@ function UserPage() {
       <h1 className="text-4xl font-bold text-gray-800 my-4 py-2 border-b-2 border-gray-200">
         User Profile
       </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id="user-form" onSubmit={handleSubmit} className="space-y-4">
         <Input
-          name="firstName"
+          id="firstName"
           label="First Name"
           required
           placeholder="Enter first name"
@@ -75,7 +74,7 @@ function UserPage() {
           onChange={handleChange}
         />
         <Input
-          name="lastName"
+          id="lastName"
           label="Last Name"
           required
           placeholder="Enter last name"
@@ -83,7 +82,7 @@ function UserPage() {
           onChange={handleChange}
         />
         <Input
-          name="phoneNumber"
+          id="phoneNumber"
           label="Phone Number"
           type="tel"
           placeholder="Enter phone number"
@@ -91,7 +90,7 @@ function UserPage() {
           onChange={handleChange}
         />
         <Input
-          name="email"
+          id="email"
           label="Email"
           type="email"
           required
@@ -99,7 +98,7 @@ function UserPage() {
           value={formData.email}
           onChange={handleChange}
         />
-        <Select name="type" label="User Type" value={formData.type} onChange={handleChange}>
+        <Select id="type" label="User Type" value={formData.type} onChange={handleChange}>
           {Object.entries(UserType).map(([key, value]) => (
             <option key={key} value={value}>
               {key}
@@ -117,5 +116,3 @@ function UserPage() {
     </>
   );
 }
-
-export default UserPage;

@@ -1,5 +1,5 @@
 import { UserListPage } from '@/user/user-list-page';
-import UserPage from '@/user/user-page';
+import { UserPage } from '@/user/user-page';
 import { Route, Routes } from 'react-router';
 
 export function UserApp() {

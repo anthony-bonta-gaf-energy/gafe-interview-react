@@ -15,13 +15,11 @@ export const Input = ({
   required = false,
   ...props
 }: InputProps) => {
+  const { id } = props;
   return (
     <div className={`mb-4 ${className}`}>
       {label && (
-        <label
-          htmlFor={props.id || props.name}
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
