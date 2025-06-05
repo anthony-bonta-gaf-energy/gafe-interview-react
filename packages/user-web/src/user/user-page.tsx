@@ -5,7 +5,11 @@ import { UserType } from '@/utils/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-export function UserPage() {
+interface Props {
+  onSubmit: (data) => void;
+}
+
+export function UserPage({ onSubmit }: Props) {
   const params = useParams();
   const userId = params.id;
   const navigate = useNavigate();
@@ -34,9 +38,11 @@ export function UserPage() {
     if (userId === 'new') {
       // Create a new user
       saveUser(formData);
+      onSubmit(formData);
     } else {
       // Update an existing user
       updateUser(formData);
+      onSubmit(formData);
     }
 
     navigate('/');

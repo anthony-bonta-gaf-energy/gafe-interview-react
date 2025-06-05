@@ -2,8 +2,10 @@ import { UserProvider } from '@/contexts/User';
 import { cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { UserPage } from './user-page';
+
+const onSubmitMock = vi.fn();
 
 const MockUserProvider = ({ children }: { children: React.ReactNode }) => (
   <UserProvider>{children}</UserProvider>
@@ -31,7 +33,7 @@ describe('User Page', () => {
             path="/users/:id"
             element={
               <MockUserProvider>
-                <UserPage />
+                <UserPage onSubmit={onSubmitMock} />
               </MockUserProvider>
             }
           />
@@ -101,6 +103,7 @@ describe('User Page', () => {
   it('shoud render form and validate submit button when user fills the form', async () => {
     const view = await getView({ initialRoute: '/users/new' });
 
+    const user = userEvent.setup();
     const header = await view.getHeader();
     const firstNameInput = (await view.getInput('first name')) as HTMLInputElement;
     const lastNameInput = (await view.getInput('last name')) as HTMLInputElement;
@@ -124,11 +127,15 @@ describe('User Page', () => {
     await view.populateInput('email', 'some@email.fake');
     await view.populateSelect('type', 'admin');
 
+    await user.click(submitButton);
+
     expect(firstNameInput.value).toBe('John');
     expect(lastNameInput.value).toBe('Doe');
     expect(phoneInput.value).toBe('');
     expect(emailInput.value).toBe('some@email.fake');
     expect(select.value).toBe('admin');
     expect(submitButton.disabled).toBe(false);
+
+    expect(onSubmitMock).toHaveBeenCalledTimes(1);
   });
 });
