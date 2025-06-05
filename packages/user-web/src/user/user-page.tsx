@@ -1,5 +1,4 @@
 import { Button, Input, Select } from '@/components';
-import { useUser } from '@/contexts/User';
 import type { User } from '@/services/users';
 import { getUserById, saveUser, updateUser } from '@/services/users';
 import { UserType } from '@/utils/constants';
@@ -9,7 +8,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 export function UserPage() {
   const params = useParams();
   const userId = params.id;
-  const { users } = useUser();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<User>({
@@ -67,6 +65,7 @@ export function UserPage() {
       <form id="user-form" onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="firstName"
+          name="firstName"
           label="First Name"
           required
           placeholder="Enter first name"
@@ -75,6 +74,7 @@ export function UserPage() {
         />
         <Input
           id="lastName"
+          name="lastName"
           label="Last Name"
           required
           placeholder="Enter last name"
@@ -83,6 +83,7 @@ export function UserPage() {
         />
         <Input
           id="phoneNumber"
+          name="phoneNumber"
           label="Phone Number"
           type="tel"
           placeholder="Enter phone number"
@@ -91,6 +92,7 @@ export function UserPage() {
         />
         <Input
           id="email"
+          name="email"
           label="Email"
           type="email"
           required
@@ -98,7 +100,13 @@ export function UserPage() {
           value={formData.email}
           onChange={handleChange}
         />
-        <Select id="type" label="User Type" value={formData.type} onChange={handleChange}>
+        <Select
+          id="type"
+          name="type"
+          label="User Type"
+          value={formData.type}
+          onChange={handleChange}
+        >
           {Object.entries(UserType).map(([key, value]) => (
             <option key={key} value={value}>
               {key}
