@@ -24,7 +24,7 @@ const BUTTON_COLOR_MAP: Record<string, string> = {
   default: 'bg-slate-500 hover:bg-blue-700 text-white',
 };
 
-const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
   onClick,
   disabled = false,
   type = 'button',
@@ -51,5 +51,3 @@ const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-
-export default Button;

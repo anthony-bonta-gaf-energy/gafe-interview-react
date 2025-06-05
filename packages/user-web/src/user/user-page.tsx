@@ -1,18 +1,20 @@
-import Button from '@/components/Button';
-import Input from '@/components/Input';
-import Select from '@/components/Select';
+import { Button, Input, Select } from '@/components';
 import { useUser } from '@/contexts/User';
 import type { User } from '@/services/users';
+import { getUserById, saveUser, updateUser } from '@/services/users';
 import { UserType } from '@/utils/constants';
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 function UserPage() {
   const params = useParams();
   const userId = params.id;
   const { users } = useUser();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<User>({
+    id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
@@ -33,15 +35,20 @@ function UserPage() {
     event.preventDefault();
 
     if (userId === 'new') {
-      return console.log('New User Created', { ...formData });
+      // Create a new user
+      saveUser(formData);
+    } else {
+      // Update an existing user
+      updateUser(formData);
     }
 
-    return console.log('User updated', { ...formData, id: userId });
+    navigate('/');
   };
 
   useEffect(() => {
     if (userId) {
-      const foundUser = users.find(user => user.id === userId);
+      const foundUser = getUserById(userId);
+
       if (foundUser) {
         setFormData({ ...foundUser });
       }

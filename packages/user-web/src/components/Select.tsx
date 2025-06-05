@@ -1,8 +1,4 @@
-import React, {
-  type CSSProperties,
-  type PropsWithChildren,
-  type SelectHTMLAttributes,
-} from 'react';
+import { type CSSProperties, type PropsWithChildren, type SelectHTMLAttributes, FC } from 'react';
 
 interface BaseSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {}
 interface SelectProps extends PropsWithChildren<BaseSelectProps> {
@@ -20,7 +16,7 @@ const SELECT_ICON_STYLE: CSSProperties = {
   backgroundSize: '1.5em 1.5em',
 };
 
-const Select: React.FC<SelectProps> = ({
+export const Select: FC<SelectProps> = ({
   children = null,
   label = '',
   required = false,
@@ -51,5 +47,3 @@ const Select: React.FC<SelectProps> = ({
     </div>
   );
 };
-
-export default Select;

@@ -6,7 +6,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   helperText?: string;
 }
 
-const Input = ({
+export const Input = ({
   label = '',
   className = '',
   error = '',
@@ -38,5 +38,3 @@ const Input = ({
     </div>
   );
 };
-
-export default Input;
