@@ -1,7 +1,7 @@
 import { Button } from '@/components';
 import { User } from '@/services/users';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import styles from './user-list-page.module.css';
 
 interface Props {
@@ -28,7 +28,7 @@ export function UserListPage({ users = [] }: Props) {
     return users.map(user => {
       const editUserHandler = () => handleEditUser(user.id || '');
       return (
-        <tr key={user.id} data-row={user.id}>
+        <tr key={user.id} data-row={user.id} data-testid={user.id}>
           <td data-col="first-name">{user.firstName}</td>
           <td data-col="last-name">{user.lastName}</td>
           <td data-col="phone-number">{user.phoneNumber}</td>

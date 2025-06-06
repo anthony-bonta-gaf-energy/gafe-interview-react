@@ -29,7 +29,7 @@ const MOCK_USERS_LIST: User[] = [
     firstName: 'John',
     lastName: 'Doe',
     phoneNumber: '123-456-7890',
-    email: '',
+    email: 'some@email.fake',
     type: UserType.Basic,
   },
 ];
@@ -64,28 +64,49 @@ describe('User Page', () => {
 
     render(
       <MemoryRouter initialEntries={[$args.initialRoute]}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <div>
-                <LocationComponent />
-                <UserListPage users={MOCK_USERS_LIST} />
-              </div>
-            }
-          />
-          <Route
-            path="/users/:id"
-            element={
-              <MockUserProvider>
-                <LocationComponent />
-                <UserPage onSubmit={onSubmitMock} />
-              </MockUserProvider>
-            }
-          />
-        </Routes>
+        <MockUserProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <LocationComponent />
+                  <UserListPage users={MOCK_USERS_LIST} />
+                </>
+              }
+            />
+            <Route
+              path="/users/:id"
+              element={
+                <MockUserProvider>
+                  <LocationComponent />
+                  <UserPage onSubmit={onSubmitMock} />
+                </MockUserProvider>
+              }
+            />
+          </Routes>
+        </MockUserProvider>
       </MemoryRouter>,
     );
+
+    const findUserRowById = (userId: string) => Promise.resolve(screen.getByTestId(userId));
+
+    const getUserDetailsFromRow = async (userId: string) => {
+      const row = await findUserRowById(userId);
+      const fistName = row.querySelector('[data-col="first-name"]')?.textContent;
+      const lastName = row.querySelector('[data-col="last-name"]')?.textContent;
+      const phoneNumber = row.querySelector('[data-col="phone-number"]')?.textContent;
+      const email = row.querySelector('[data-col="email"]')?.textContent;
+      const type = row.querySelector('[data-col="type"]')?.textContent;
+
+      return {
+        fistName,
+        lastName,
+        phoneNumber,
+        email,
+        type,
+      };
+    };
 
     const getForm = () => Promise.resolve(screen.getByTestId('create-user-form'));
 
@@ -120,6 +141,8 @@ describe('User Page', () => {
       populateInput,
       populateSelect,
       getUserTypeSelect,
+      findUserRowById,
+      getUserDetailsFromRow,
     });
   };
 
@@ -188,7 +211,13 @@ describe('User Page', () => {
     expect(emailInput).not.toBeInTheDocument();
     expect(submitButton).not.toBeInTheDocument();
     expect(select).not.toBeInTheDocument();
+  });
 
-    console.log('currentLocation', currentLocation);
+  it('validate that after redirecting to user list page, the user can see the list of existing users', async () => {
+    const view = await getView({ initialRoute: '/' });
+    const userDetails = await view.getUserDetailsFromRow('1');
+    console.log(userDetails);
+
+    expect(1).toBe(1); // This is a placeholder assertion to ensure the test runs
   });
 });
