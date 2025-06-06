@@ -38,11 +38,7 @@ export function UserForm({ initialValues, onSave, onCancel }: UserFormProps) {
   const isEditMode = initialValues !== undefined;
 
   // selector usefull to determine if the form has been modified
-  const isDirty = (initialFormValues: PartialUser): boolean => {
-    return requiredFields.concat(['phoneNumber']).some(
-      field => form[field] !== initialFormValues[field]
-    );
-  };
+  const isDirty = (initialFormValues: PartialUser): boolean => JSON.stringify(form) !== JSON.stringify(initialFormValues);
 
   // selector usefull to determine is the save buttons should be enabled
   const isSaveButtonEnabled = isFormValid && (isEditMode ? isDirty(initialValues) : true);
