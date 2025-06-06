@@ -56,7 +56,7 @@ export function UserForm({ initialValues, onSave, onCancel }: UserFormProps) {
       firstName: form.firstName as string,
       lastName: form.lastName as string,
       email: form.email as string,
-      phoneNumber: form.phoneNumber ? form.phoneNumber : undefined, // this could be undefined
+      phoneNumber: form.phoneNumber, // this could be undefined
       type: form.type as UserType,
     };
 
