@@ -23,7 +23,7 @@ const UsersContext = createContext<UsersContextType | null>(null);
 export function UsersProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
   useEffect(() => {
-    fetchUsers().then(setUsers)
+    fetchUsers().then(setUsers);
   }, []);
   const addUser = (user: User) =>
     setUsers(prev => Array.isArray(prev) ? [...prev, user] : [user]);
