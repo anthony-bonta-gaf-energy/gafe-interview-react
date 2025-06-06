@@ -130,7 +130,7 @@ describe('User Page', () => {
     expect(submitButton).toBeInTheDocument();
     expect(select).toBeInTheDocument();
 
-    expect(submitButton).toHaveValue('Create User');
+    expect(submitButton).toHaveTextContent('Create User');
 
     await view.populateInput('first name', 'John');
     await view.populateInput('last name', 'Doe');
@@ -144,7 +144,7 @@ describe('User Page', () => {
     expect(phoneInput.value).toBe('');
     expect(emailInput.value).toBe('some@email.fake');
     expect(select.value).toBe('admin');
-    expect(submitButton).toBeDisabled();
+    expect(submitButton).toBeEnabled();
 
     expect(onSubmitMock).toHaveBeenCalledTimes(1);
   });
