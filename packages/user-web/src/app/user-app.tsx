@@ -1,8 +1,7 @@
 import { getAllUsers, saveUser, updateUser } from '@/services/users';
 import { UserListPage } from '@/user/user-list-page';
 import { UserPage } from '@/user/user-page';
-import { Route, Routes } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 export function UserApp() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { Button } from '@/components';
 import { User } from '@/services/users';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './user-list-page.module.css';
 
 interface Props {
@@ -35,12 +35,12 @@ export function UserListPage({ users = [] }: Props) {
           <td data-col="email">{user.email}</td>
           <td data-col="type">{user.type}</td>
           <td data-col="actions">
-            <Button
-              className="text-sm w-8 h-8 p-0 rounded-full flex items-center justify-center hover:bg-gray-200"
-              onClick={editUserHandler}
+            <Link
+              className="text-sm w-8 h-8 p-0 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors"
+              to={`/users/${user.id}`}
             >
-              Edit{' '}
-            </Button>
+              Edit
+            </Link>
           </td>
         </tr>
       );

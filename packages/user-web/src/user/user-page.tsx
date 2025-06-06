@@ -55,11 +55,7 @@ export function UserPage({ onSubmit }: Props) {
       <h1 className="text-4xl font-bold text-gray-800 my-4 py-2 border-b-2 border-gray-200">
         User Profile
       </h1>
-      <form
-        data-testid={formData.id ? 'update-user-form' : 'create-user-form'}
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
+      <form data-testid="user-form" onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="firstName"
           name="firstName"

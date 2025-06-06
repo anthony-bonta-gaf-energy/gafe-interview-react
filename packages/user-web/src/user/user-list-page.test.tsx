@@ -1,13 +1,26 @@
+import { User } from '@/services/users';
+import { UserType } from '@/utils/constants';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { Router } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { UserListPage } from './user-list-page';
 
 interface GetViewArgs {
   history: History;
 }
+
+const MOCK_USERS_LIST: User[] = [
+  {
+    id: '1',
+    firstName: 'John',
+    lastName: 'Doe',
+    phoneNumber: '123-456-7890',
+    email: 'some@email.fake',
+    type: UserType.Basic,
+  },
+];
 
 describe('User List Page', () => {
   const getView = (args?: GetViewArgs) => {
@@ -18,7 +31,7 @@ describe('User List Page', () => {
 
     const target = render(
       <Router location={$args.history.location} navigator={$args.history}>
-        <UserListPage />
+        <UserListPage users={MOCK_USERS_LIST} />
       </Router>,
     );
 
