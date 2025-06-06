@@ -36,7 +36,7 @@ export function UserPage({ onSubmit }: Props) {
   };
 
   useEffect(() => {
-    if (userId) {
+    if (userId && userId !== 'new') {
       const foundUser = getUserById(userId);
 
       if (foundUser) {
