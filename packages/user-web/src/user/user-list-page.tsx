@@ -1,12 +1,15 @@
 import { Button } from '@/components';
-import { getAllUsers } from '@/services/users';
+import { User } from '@/services/users';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import styles from './user-list-page.module.css';
 
-export function UserListPage() {
+interface Props {
+  users: User[];
+}
+
+export function UserListPage({ users = [] }: Props) {
   const navigate = useNavigate();
-  const users = getAllUsers();
 
   const handleCreateUser = useCallback(() => navigate('/users/new'), [navigate]);
   const handleEditUser = useCallback((id: string) => navigate(`/users/${id}`), [navigate]);
