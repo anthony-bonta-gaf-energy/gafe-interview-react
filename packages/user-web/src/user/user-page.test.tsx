@@ -1,4 +1,8 @@
 import { UserProvider } from '@/contexts/User';
+import { User } from '@/services/users';
+import { UserListPage } from '@/user/user-list-page';
+import { UserPage } from '@/user/user-page';
+import { UserType } from '@/utils/constants';
 import { cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import {
@@ -11,23 +15,24 @@ import {
   type NavigateFunction,
 } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { UserPage } from './user-page';
 
 let currentLocation: Location;
 let navigate: NavigateFunction;
+
 const onSubmitMock = vi.fn().mockImplementation(() => {
   navigate('/');
 });
 
-// 1. typing on HTMLElement, not casting the UI elements
-// TIP: data-test-id is encouraged
-// FORM: data-test-id
-
-// 2. Adding jest to access other assertions like toBeDefined, etc.
-
-// 3. Validate both flows creating and using
-
-// CREATE PR by the end of day
+const MOCK_USERS_LIST: User[] = [
+  {
+    id: '1',
+    firstName: 'John',
+    lastName: 'Doe',
+    phoneNumber: '123-456-7890',
+    email: '',
+    type: UserType.Basic,
+  },
+];
 
 const MockUserProvider = ({ children }: { children: React.ReactNode }) => (
   <UserProvider>{children}</UserProvider>
@@ -65,7 +70,7 @@ describe('User Page', () => {
             element={
               <div>
                 <LocationComponent />
-                <h1> Home </h1>
+                <UserListPage users={MOCK_USERS_LIST} />
               </div>
             }
           />
