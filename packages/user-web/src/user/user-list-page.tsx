@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useUsers } from './user-context';
 import styles from './user-list-page.module.css';
 import { USER_TYPE_LABELS } from './user.mjs';
 
+// arbitrary number of users to display per page
+const PAGE_SIZE = 5;
+
 export function UserListPage() {
+  const [page, setPage] = useState(0);
   const {
     users
   } = useUsers();
@@ -11,6 +16,10 @@ export function UserListPage() {
 
   const handleCreateUser = () => navigate('/users/new');
   const handleEditUser = (id: string) => navigate(`/users/${id}`);
+
+  const paginatedUsers = users.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const pageCount = Math.ceil(users.length / PAGE_SIZE);
 
   return (
     <div className={styles['user-list-page']}>
@@ -28,7 +37,7 @@ export function UserListPage() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => {
+          {paginatedUsers.map((user) => {
             return (
               <tr key={user.id} data-row={user.id}>
                 <td data-col="first-name">{user.firstName}</td>
@@ -62,6 +71,17 @@ export function UserListPage() {
           </tr>
         </tbody>
       </table>
+      <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+        <button
+          disabled={page === 0}
+          onClick={() => setPage(page - 1)}
+        >Prev</button>
+        <span>Page {page + 1} / {pageCount || 1}</span>
+        <button
+          disabled={page + 1 >= pageCount}
+          onClick={() => setPage(page + 1)}
+        >Next</button>
+      </div>
     </div>
   );
 }
