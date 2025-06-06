@@ -4,6 +4,7 @@
     "baseUrl": "packages",
     "target": "esnext",
     "moduleResolution": "bundler",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["user-web/src/*"]
     }

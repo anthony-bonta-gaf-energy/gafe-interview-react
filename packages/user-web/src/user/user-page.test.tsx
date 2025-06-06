@@ -122,15 +122,15 @@ describe('User Page', () => {
     const submitButton = await view.getCreateUserButton();
     const select = (await view.getUserTypeSelect()) as HTMLSelectElement;
 
-    expect(header).toBeDefined();
-    expect(firstNameInput).toBeDefined();
-    expect(lastNameInput).toBeDefined();
-    expect(phoneInput).toBeDefined();
-    expect(emailInput).toBeDefined();
-    expect(submitButton).toBeDefined();
-    expect(select).toBeDefined();
+    expect(header).toBeInTheDocument();
+    expect(firstNameInput).toBeInTheDocument();
+    expect(lastNameInput).toBeInTheDocument();
+    expect(phoneInput).toBeInTheDocument();
+    expect(emailInput).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
+    expect(select).toBeInTheDocument();
 
-    expect(submitButton.textContent).toBe('Create User');
+    expect(submitButton).toHaveValue('Create User');
 
     await view.populateInput('first name', 'John');
     await view.populateInput('last name', 'Doe');
@@ -139,12 +139,12 @@ describe('User Page', () => {
 
     await user.click(submitButton);
 
-    expect(firstNameInput.value).toBe('John');
+    expect(firstNameInput).toHaveValue('John');
     expect(lastNameInput.value).toBe('Doe');
     expect(phoneInput.value).toBe('');
     expect(emailInput.value).toBe('some@email.fake');
     expect(select.value).toBe('admin');
-    expect(submitButton.disabled).toBe(false);
+    expect(submitButton).toBeDisabled();
 
     expect(onSubmitMock).toHaveBeenCalledTimes(1);
   });
