@@ -1,11 +1,22 @@
+import { saveUser, updateUser } from '@/services/users';
 import { UserListPage } from '@/user/user-list-page';
 import { UserPage } from '@/user/user-page';
 import { Route, Routes } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export function UserApp() {
+  const navigate = useNavigate();
+
   const handleSubmit = data => {
-    console.log('Form submitted', data);
+    if ('id' in data) {
+      updateUser(data);
+    } else {
+      saveUser(data);
+    }
+
+    navigate('/');
   };
+
   return (
     <div className="gafe-user-app min-h-screen p-4 border rounded w-[80vw] mx-auto my-2">
       <Routes>

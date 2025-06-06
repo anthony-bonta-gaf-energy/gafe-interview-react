@@ -34,7 +34,7 @@ export const saveUser = (user: User): User => {
   // Generate a new ID if one doesn't exist
   const newUser = {
     ...user,
-    id: user.id || crypto.randomUUID(),
+    id: crypto.randomUUID(),
   };
 
   // Add the new user to the list

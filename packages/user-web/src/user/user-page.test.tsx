@@ -7,6 +7,16 @@ import { UserPage } from './user-page';
 
 const onSubmitMock = vi.fn();
 
+// 1. typing on HTMLElement, not casting the UI elements
+// TIP: data-test-id is encouraged
+// FORM: data-test-id
+
+// 2. Adding jest to access other assertions like toBeDefined, etc.
+
+// 3. Validate both flows creating and using
+
+// CREATE PR by the end of day
+
 const MockUserProvider = ({ children }: { children: React.ReactNode }) => (
   <UserProvider>{children}</UserProvider>
 );
@@ -105,7 +115,7 @@ describe('User Page', () => {
 
     const user = userEvent.setup();
     const header = await view.getHeader();
-    const firstNameInput = (await view.getInput('first name')) as HTMLInputElement;
+    const firstNameInput = await view.getInput('first name');
     const lastNameInput = (await view.getInput('last name')) as HTMLInputElement;
     const phoneInput = (await view.getInput('phone number')) as HTMLInputElement;
     const emailInput = (await view.getInput('email')) as HTMLInputElement;

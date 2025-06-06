@@ -1,21 +1,19 @@
 import { Button, Input, Select } from '@/components';
 import type { User } from '@/services/users';
-import { getUserById, saveUser, updateUser } from '@/services/users';
+import { getUserById } from '@/services/users';
 import { UserType } from '@/utils/constants';
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
-  onSubmit: (data) => void;
+  onSubmit: (data: User) => void;
 }
 
 export function UserPage({ onSubmit }: Props) {
   const params = useParams();
   const userId = params.id;
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<User>({
-    id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
@@ -32,20 +30,9 @@ export function UserPage({ onSubmit }: Props) {
     }));
   }, []);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = event => {
     event.preventDefault();
-
-    if (userId === 'new') {
-      // Create a new user
-      saveUser(formData);
-      onSubmit(formData);
-    } else {
-      // Update an existing user
-      updateUser(formData);
-      onSubmit(formData);
-    }
-
-    navigate('/');
+    onSubmit(formData);
   };
 
   useEffect(() => {
