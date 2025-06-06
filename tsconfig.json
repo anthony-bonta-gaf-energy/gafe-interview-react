@@ -2,7 +2,12 @@
   "extends": "./.config/.tsconfig.json",
   "compilerOptions": {
     "baseUrl": "packages",
-    "target": "esnext"
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@/*": ["user-web/src/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"]
 }

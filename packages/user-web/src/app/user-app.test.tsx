@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { MemoryHistory, createMemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { Router } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { UserApp } from './user-app';
 

@@ -1,14 +1,17 @@
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
-export function defineWeb(dir: string) {
+export function defineWeb() {
   return defineConfig({
-    plugins: [tsConfigPaths()],
+    plugins: [tsConfigPaths(), tailwindcss()],
     server: {
       strictPort: true,
     },
     resolve: {
       alias: {
+        '@': path.resolve(__dirname, '../packages/user-web/src'),
         lodash: 'lodash-es',
       },
     },
