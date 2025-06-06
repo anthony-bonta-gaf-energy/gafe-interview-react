@@ -1,10 +1,11 @@
 import { UserProvider } from '@/contexts/User';
 import { cleanup, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation, type Location } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { UserPage } from './user-page';
 
+let currentLocation: Location;
 const onSubmitMock = vi.fn();
 
 // 1. typing on HTMLElement, not casting the UI elements
@@ -20,6 +21,12 @@ const onSubmitMock = vi.fn();
 const MockUserProvider = ({ children }: { children: React.ReactNode }) => (
   <UserProvider>{children}</UserProvider>
 );
+
+const LocationComponent = () => {
+  const location = useLocation();
+  currentLocation = location;
+  return null;
+};
 
 interface GetViewArgs {
   initialRoute?: string;
@@ -40,10 +47,19 @@ describe('User Page', () => {
       <MemoryRouter initialEntries={[$args.initialRoute]}>
         <Routes>
           <Route
+            path="/"
+            element={
+              <div>
+                <h1> Home </h1>
+              </div>
+            }
+          />
+          <Route
             path="/users/:id"
             element={
               <MockUserProvider>
                 <UserPage onSubmit={onSubmitMock} />
+                <LocationComponent />
               </MockUserProvider>
             }
           />
