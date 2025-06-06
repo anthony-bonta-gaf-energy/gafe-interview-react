@@ -67,16 +67,17 @@ describe('User Page', () => {
       </MemoryRouter>,
     );
 
+    const getForm = () => Promise.resolve(screen.getByTestId('create-user-form'));
+
     const getInput = (name: string) =>
       Promise.resolve(screen.getByLabelText(new RegExp(name, 'i')));
 
     const getSelect = (name: string) =>
       Promise.resolve(screen.getByRole('combobox', { name: new RegExp(name, 'i') }));
 
-    const getHeader = () => Promise.resolve(screen.getByRole('heading', { name: /user profile/i }));
+    const getHeader = () => Promise.resolve(screen.getByText('User Profile'));
 
-    const getCreateUserButton = () =>
-      Promise.resolve(screen.getByText<HTMLButtonElement>('Create User'));
+    const getCreateUserButton = () => Promise.resolve(screen.getByText('Create User'));
 
     const getUserTypeSelect = async () => await getSelect('user type');
 
@@ -92,6 +93,7 @@ describe('User Page', () => {
     };
 
     return Promise.resolve({
+      getForm,
       getInput,
       getHeader,
       getCreateUserButton,
@@ -104,6 +106,7 @@ describe('User Page', () => {
   it('should render create user form with all its fields', async () => {
     const view = await getView({ initialRoute: '/users/new' });
 
+    const form = await view.getForm();
     const header = await view.getHeader();
     const firstNameInput = await view.getInput('first name');
     const lastNameInput = await view.getInput('last name');
@@ -113,17 +116,18 @@ describe('User Page', () => {
     const submitButton = await view.getCreateUserButton();
     const select = await view.getUserTypeSelect();
 
-    expect(header).toBeDefined();
-    expect(firstNameInput).toBeDefined();
-    expect(lastNameInput).toBeDefined();
-    expect(phoneInput).toBeDefined();
-    expect(emailInput).toBeDefined();
-    expect(typeSelect).toBeDefined();
-    expect(submitButton).toBeDefined();
-    expect(select).toBeDefined();
+    expect(form).toBeInTheDocument();
+    expect(header).toBeInTheDocument();
+    expect(firstNameInput).toBeInTheDocument();
+    expect(lastNameInput).toBeInTheDocument();
+    expect(phoneInput).toBeInTheDocument();
+    expect(emailInput).toBeInTheDocument();
+    expect(typeSelect).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
+    expect(select).toBeInTheDocument();
 
-    expect(submitButton.textContent).toBe('Create User');
-    expect(submitButton.disabled).toBe(true);
+    expect(submitButton).toHaveTextContent('Create User');
+    expect(submitButton).toBeDisabled();
   });
 
   it('shoud render form and validate submit button when user fills the form', async () => {
@@ -132,11 +136,11 @@ describe('User Page', () => {
     const user = userEvent.setup();
     const header = await view.getHeader();
     const firstNameInput = await view.getInput('first name');
-    const lastNameInput = (await view.getInput('last name')) as HTMLInputElement;
-    const phoneInput = (await view.getInput('phone number')) as HTMLInputElement;
-    const emailInput = (await view.getInput('email')) as HTMLInputElement;
+    const lastNameInput = await view.getInput('last name');
+    const phoneInput = await view.getInput('phone number');
+    const emailInput = await view.getInput('email');
     const submitButton = await view.getCreateUserButton();
-    const select = (await view.getUserTypeSelect()) as HTMLSelectElement;
+    const select = await view.getUserTypeSelect();
 
     expect(header).toBeInTheDocument();
     expect(firstNameInput).toBeInTheDocument();
@@ -156,10 +160,10 @@ describe('User Page', () => {
     await user.click(submitButton);
 
     expect(firstNameInput).toHaveValue('John');
-    expect(lastNameInput.value).toBe('Doe');
-    expect(phoneInput.value).toBe('');
-    expect(emailInput.value).toBe('some@email.fake');
-    expect(select.value).toBe('admin');
+    expect(lastNameInput).toHaveValue('Doe');
+    expect(phoneInput).toHaveValue('');
+    expect(emailInput).toHaveValue('some@email.fake');
+    expect(select).toHaveValue('admin');
     expect(submitButton).toBeEnabled();
 
     expect(onSubmitMock).toHaveBeenCalledTimes(1);
