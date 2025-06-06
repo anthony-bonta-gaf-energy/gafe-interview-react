@@ -26,8 +26,8 @@ const onSubmitMock = vi.fn().mockImplementation(() => {
 const MOCK_USERS_LIST: User[] = [
   {
     id: '1',
-    firstName: 'John',
-    lastName: 'Doe',
+    firstName: 'Mike',
+    lastName: 'Smith',
     phoneNumber: '123-456-7890',
     email: 'some@email.fake',
     type: UserType.Basic,
@@ -121,8 +121,9 @@ describe('User Page', () => {
     const editUserFormPopulation = async () => {
       await populateInput('first name', 'John');
       await populateInput('last name', 'Doe');
+      await populateInput('phone number', '1111111111');
       await populateInput('email', 'another@fake.email');
-      await populateSelect('type', 'basic');
+      await populateSelect('type', 'admin');
     };
 
     const getForm = () => Promise.resolve(screen.getByTestId('user-form'));
@@ -213,6 +214,7 @@ describe('User Page', () => {
 
     await view.populateInput('first name', 'John');
     await view.populateInput('last name', 'Doe');
+    await view.populateInput('phone number', '1111111');
     await view.populateInput('email', 'some@email.fake');
     await view.populateSelect('type', 'admin');
 
@@ -220,9 +222,10 @@ describe('User Page', () => {
     // phoneNumber is not required, so it goes as empty and should still work
     expect(submitButton).toBeEnabled();
 
+    // validate the form has new values
     expect(firstNameInput).toHaveValue('John');
     expect(lastNameInput).toHaveValue('Doe');
-    expect(phoneInput).toHaveValue('');
+    expect(phoneInput).toHaveValue('1111111');
     expect(emailInput).toHaveValue('some@email.fake');
     expect(select).toHaveValue('admin');
 
@@ -273,6 +276,18 @@ describe('User Page', () => {
     expect(select).toBeInTheDocument();
     expect(updateButton).toHaveTextContent('Update User');
     expect(updateButton).toBeEnabled();
+
+    // Once we populate the fields with new data, this is the new expected form values:
+    // 'John'
+    // 'Doe'
+    // '1111111111'
+    // 'another@fake.email'
+    // 'admin'
+    expect(firstNameInput).toHaveValue('John');
+    expect(lastNameInput).toHaveValue('Doe');
+    expect(phoneInput).toHaveValue('1111111111');
+    expect(emailInput).toHaveValue('another@fake.email');
+    expect(select).toHaveValue('admin');
 
     // we perform the update
     await user.click(updateButton);
