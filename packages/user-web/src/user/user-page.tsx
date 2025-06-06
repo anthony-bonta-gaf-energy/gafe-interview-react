@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash";
-import React from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { APIClient } from "./api-client";
 import { useUsers } from "./user-context";
@@ -30,10 +30,10 @@ export function UserPage() {
     users,
     addUser
   } = useUsers();
-  const [userDetails, setUserDetails] = React.useState<User>();
+  const [userDetails, setUserDetails] = useState<User>();
 
   // document mentioned a 404 as a posibility if the user does not exist, so we need to take care of this case as well
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const params = useParams<UserRouteParams>();
   const navigate = useNavigate();
   // since we only need to take care of editing if the id is unto the params
@@ -41,7 +41,7 @@ export function UserPage() {
   const isEditing = Boolean(params.id);
   const id = params.id;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isEditing && id) {
       APIClient.request<User>({
         url: `/users/${id}`,
