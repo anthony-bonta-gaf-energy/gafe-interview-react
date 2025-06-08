@@ -16,6 +16,7 @@
   "scripts": {
     "clean": "rimraf --glob 'coverage' '*.tgz' '*.log' 'packages/**/dist' 'packages/**/*.tgz' 'packages/**/*.log' 'packages/**/stats'",
     "test": "vitest run --coverage",
+    "test:run": "vitest",
     "build": "lerna run build",
     "check": "tsc --noEmit",
     "make": "npm run clean && npm run check && npm run test && npm run build"
