@@ -48,9 +48,14 @@ describe('UserPage', () => {
       await userEvent.selectOptions(select, value);
     };
 
+    const getButton = (label: RegExp): Promise<HTMLButtonElement> => {
+      return Promise.resolve(screen.getByRole('button', { name: label }));
+    };
+
     return Promise.resolve({
       getInput,
       getSelect,
+      getButton,
 
       fillInput,
       selectOption,
@@ -110,6 +115,76 @@ describe('UserPage', () => {
         expect(emailInput.value).toBe(mockUser.email);
         expect(phoneInput.value).toBe(mockUser.phoneNumber);
         expect(typeSelect.value).toBe(mockUser.type);
+      });
+    });
+
+    describe('Scenario: Disable the save button when a required field is not entered', () => {
+      const mockUser = {
+        firstName: 'Juan',
+        lastName: 'Perez',
+        phoneNumber: '521234567890',
+        email: 'juan.perez@example.com',
+        type: 'admin',
+      };
+
+      it('should disable the save button when First Name is missing', async () => {
+        // Arrange
+        const view = await getView();
+
+        // Act
+        await view.fillInput(/Last Name/i, mockUser.lastName);
+        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
+        await view.fillInput(/Email/i, mockUser.email);
+        await view.selectOption(/Type/i, mockUser.type);
+
+        // Assert
+        const saveButton = await view.getButton(/Save/i);
+        expect(saveButton).toBeDisabled();
+      });
+
+      it('should disable the save button when Last Name is missing', async () => {
+        // Arrange
+        const view = await getView();
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
+        await view.fillInput(/Email/i, mockUser.email);
+        await view.selectOption(/Type/i, mockUser.type);
+
+        // Assert
+        const saveButton = await view.getButton(/Save/i);
+        expect(saveButton).toBeDisabled();
+      });
+
+      it('should disable the save button when Email is missing', async () => {
+        // Arrange
+        const view = await getView();
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+        await view.fillInput(/Last Name/i, mockUser.lastName);
+        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
+        await view.selectOption(/Type/i, mockUser.type);
+
+        // Assert
+        const saveButton = await view.getButton(/Save/i);
+        expect(saveButton).toBeDisabled();
+      });
+
+      it('should disable the save button when Type is missing', async () => {
+        // Arrange
+        const view = await getView();
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+        await view.fillInput(/Last Name/i, mockUser.lastName);
+        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
+        await view.fillInput(/Email/i, mockUser.email);
+
+        // Assert
+        const saveButton = await view.getButton(/Save/i);
+        expect(saveButton).toBeDisabled();
       });
     });
   });
