@@ -127,65 +127,47 @@ describe('UserPage', () => {
         type: 'admin',
       };
 
-      it('should disable the save button when First Name is missing', async () => {
-        // Arrange
-        const view = await getView();
+      const requiredFields = ['firstName', 'lastName', 'email', 'type'] as const;
 
-        // Act
-        await view.fillInput(/Last Name/i, mockUser.lastName);
-        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
-        await view.fillInput(/Email/i, mockUser.email);
-        await view.selectOption(/Type/i, mockUser.type);
+      const fillFormExcept = async (view: Awaited<ReturnType<typeof getView>>, omitKey: string) => {
+        const labelMap: Record<string, RegExp> = {
+          firstName: /First Name/i,
+          lastName: /Last Name/i,
+          phoneNumber: /Phone Number/i,
+          email: /Email/i,
+          type: /Type/i,
+        };
 
-        // Assert
-        const saveButton = await view.getButton(/Save/i);
-        expect(saveButton).toBeDisabled();
-      });
+        for (const inputName of Object.keys(mockUser)) {
+          if (inputName === omitKey) continue;
 
-      it('should disable the save button when Last Name is missing', async () => {
-        // Arrange
-        const view = await getView();
+          const label = labelMap[inputName];
+          const value = mockUser[inputName];
+          if (!value) continue;
 
-        // Act
-        await view.fillInput(/First Name/i, mockUser.firstName);
-        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
-        await view.fillInput(/Email/i, mockUser.email);
-        await view.selectOption(/Type/i, mockUser.type);
+          if (inputName === 'type') {
+            await view.selectOption(label, value);
+          } else {
+            await view.fillInput(label, value);
+          }
+        }
+      };
 
-        // Assert
-        const saveButton = await view.getButton(/Save/i);
-        expect(saveButton).toBeDisabled();
-      });
+      it.each(requiredFields)(
+        'should disable the save button when %s is missing',
+        async missingField => {
+          // Arrange
+          const history = createMemoryHistory({ initialEntries: ['/users/new'] });
+          const view = await getView({ history });
 
-      it('should disable the save button when Email is missing', async () => {
-        // Arrange
-        const view = await getView();
+          // Act
+          await fillFormExcept(view, missingField);
 
-        // Act
-        await view.fillInput(/First Name/i, mockUser.firstName);
-        await view.fillInput(/Last Name/i, mockUser.lastName);
-        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
-        await view.selectOption(/Type/i, mockUser.type);
-
-        // Assert
-        const saveButton = await view.getButton(/Save/i);
-        expect(saveButton).toBeDisabled();
-      });
-
-      it('should disable the save button when Type is missing', async () => {
-        // Arrange
-        const view = await getView();
-
-        // Act
-        await view.fillInput(/First Name/i, mockUser.firstName);
-        await view.fillInput(/Last Name/i, mockUser.lastName);
-        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
-        await view.fillInput(/Email/i, mockUser.email);
-
-        // Assert
-        const saveButton = await view.getButton(/Save/i);
-        expect(saveButton).toBeDisabled();
-      });
+          // Assert
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton).toBeDisabled();
+        },
+      );
     });
   });
 
