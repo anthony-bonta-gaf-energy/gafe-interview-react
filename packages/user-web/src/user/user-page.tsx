@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { FormField } from './components/atoms/form-field/form-field';
 import { UserType } from './user.mjs';
 
 export function UserPage() {
@@ -13,13 +14,16 @@ export function UserPage() {
     // TODO: save user
   };
 
+  const isUserFormValid = (): boolean => {
+    return Boolean(firstName && lastName && email && type);
+  };
+
   return (
     <div>
       <h1>User Page</h1>
 
       <form aria-label="User Form" onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label htmlFor="firstName">First Name</label>
+        <FormField htmlFor="firstName" label="First Name">
           <input
             id="firstName"
             name="firstName"
@@ -27,9 +31,8 @@ export function UserPage() {
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
           />
-        </div>
-        <div className="form-field">
-          <label htmlFor="lastName">Last Name</label>
+        </FormField>
+        <FormField htmlFor="lastName" label="Last Name">
           <input
             id="lastName"
             name="lastName"
@@ -37,9 +40,8 @@ export function UserPage() {
             value={lastName}
             onChange={e => setLastName(e.target.value)}
           />
-        </div>
-        <div className="form-field">
-          <label htmlFor="phoneNumber">Phone Number</label>
+        </FormField>
+        <FormField htmlFor="phoneNumber" label="Phone Number">
           <input
             id="phoneNumber"
             name="phoneNumber"
@@ -47,9 +49,8 @@ export function UserPage() {
             value={phoneNumber}
             onChange={e => setPhoneNumber(e.target.value)}
           />
-        </div>
-        <div className="form-field">
-          <label htmlFor="email">Email</label>
+        </FormField>
+        <FormField htmlFor="email" label="Email">
           <input
             id="email"
             name="email"
@@ -57,9 +58,8 @@ export function UserPage() {
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
-        </div>
-        <div className="form-field">
-          <label htmlFor="type">Type</label>
+        </FormField>
+        <FormField htmlFor="type" label="Type">
           <select
             id="type"
             name="type"
@@ -70,7 +70,11 @@ export function UserPage() {
             <option value="admin">Admin</option>
             <option value="basic">Basic</option>
           </select>
-        </div>
+        </FormField>
+
+        <button type="submit" disabled={!isUserFormValid()}>
+          Save
+        </button>
       </form>
     </div>
   );
