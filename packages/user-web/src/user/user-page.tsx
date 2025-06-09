@@ -27,6 +27,10 @@ export function UserPage() {
     }
   };
 
+  const handleCancel = () => {
+    navigate('/');
+  };
+
   const isUserFormValid = (): boolean => {
     return Boolean(firstName && lastName && email && type);
   };
@@ -87,6 +91,9 @@ export function UserPage() {
 
         <button type="submit" disabled={!isUserFormValid()}>
           Save
+        </button>
+        <button type="button" onClick={handleCancel}>
+          Cancel
         </button>
       </form>
     </div>
