@@ -200,7 +200,7 @@ describe('UserPage', () => {
 
         // Assert
         expect(userService.saveUser).toHaveBeenCalledWith(mockUser);
-        expect(history.location.pathname).toBe('/users');
+        expect(history.location.pathname).toBe('/');
       });
     });
   });
