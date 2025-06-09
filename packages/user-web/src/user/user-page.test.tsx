@@ -294,5 +294,79 @@ describe('UserPage', () => {
         });
       });
     });
+
+    describe('Scenario: Enable the save button', () => {
+      it('should enable the save button when user makes changes and all required fields are filled out', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, 'Juan');
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(false);
+        });
+      });
+    });
+
+    describe('Scenario: Disable the save button when the form returns to clean', () => {
+      it('should disable the save button when the form returns to original state', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Wait for form to populate
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, 'Juan');
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(false);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(true);
+        });
+      });
+    });
   });
 });
