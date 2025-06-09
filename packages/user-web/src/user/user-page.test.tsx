@@ -262,5 +262,37 @@ describe('UserPage', () => {
         });
       });
     });
+
+    describe('Scenario: Disable the save button when the form is clean', () => {
+      it('should disable the save button if no changes are made', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Act
+
+        const saveButton = await view.getButton(/Save/i);
+
+        // Assert
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        await waitFor(() => {
+          expect(saveButton.disabled).toBe(true);
+        });
+      });
+    });
   });
 });
