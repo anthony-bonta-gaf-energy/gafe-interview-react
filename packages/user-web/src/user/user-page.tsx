@@ -1,9 +1,9 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { handleError } from '../shared/handleError.mjs';
 import { FormField } from './components/atoms/form-field/form-field.js';
 import { getUserById, saveUser } from './services/user.service.mjs';
-import { UserType } from './user.mjs';
+import { User, UserType } from './user.mjs';
 
 export function UserPage() {
   const [firstName, setFirstName] = useState('');
@@ -14,6 +14,8 @@ export function UserPage() {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const initialUserRef = useRef<User | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,12 +38,27 @@ export function UserPage() {
     return Boolean(firstName && lastName && email && type);
   };
 
+  const hasFormChanged = (): boolean => {
+    const initialUser = initialUserRef.current;
+    if (!initialUser || !id) return true;
+
+    return (
+      initialUser.firstName !== firstName ||
+      initialUser.lastName !== lastName ||
+      initialUser.phoneNumber !== phoneNumber ||
+      initialUser.email !== email ||
+      initialUser.type !== type
+    );
+  };
+
   useEffect(() => {
     const populateForm = async () => {
       if (!id) return;
 
       const user = await getUserById(id);
       if (!user) return;
+
+      initialUserRef.current = user;
 
       setFirstName(user.firstName);
       setLastName(user.lastName);
@@ -106,7 +123,7 @@ export function UserPage() {
           </select>
         </FormField>
 
-        <button type="submit" disabled={!isUserFormValid()}>
+        <button type="submit" disabled={!isUserFormValid() || !hasFormChanged()}>
           Save
         </button>
         <button type="button" onClick={handleCancel}>
