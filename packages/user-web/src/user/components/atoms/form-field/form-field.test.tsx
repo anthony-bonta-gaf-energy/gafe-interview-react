@@ -1,7 +1,6 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { FormField } from './form-field';
+import { FormField } from './form-field.js';
 
 interface GetViewArgs {
   htmlFor: string;
@@ -44,8 +43,8 @@ describe('FormField', () => {
     const input = await view.getInput(/First Name/i);
 
     // Assert
-    expect(label).toBeInTheDocument();
-    expect(input).toBeInTheDocument();
+    expect(label).not.toBeNull();
+    expect(input).not.toBeNull();
   });
 
   it('should associate the correct input via htmlFor', async () => {
@@ -61,8 +60,8 @@ describe('FormField', () => {
     const input = await view.getInput(/First Name/i);
 
     // Assert
-    expect(label).toHaveAttribute('for', 'firstName');
-    expect(input).toHaveAttribute('id', 'firstName');
-    expect(input).toHaveAttribute('name', 'firstName');
+    expect(label.getAttribute('for')).toBe('firstName');
+    expect(input.getAttribute('id')).toBe('firstName');
+    expect(input.getAttribute('name')).toBe('firstName');
   });
 });
