@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { handleError } from '../shared/handleError.mjs';
 import { FormField } from './components/atoms/form-field/form-field.js';
@@ -39,11 +39,11 @@ export function UserPage() {
     navigate('/');
   };
 
-  const isUserFormValid = (): boolean => {
+  const isUserFormValid = useCallback((): boolean => {
     return Boolean(firstName && lastName && email && type);
-  };
+  }, [firstName, lastName, email, type]);
 
-  const hasFormChanged = (): boolean => {
+  const hasFormChanged = useCallback((): boolean => {
     const initialUser = initialUserRef.current;
     if (!initialUser || !id) return true;
 
@@ -54,7 +54,7 @@ export function UserPage() {
       initialUser.email !== email ||
       initialUser.type !== type
     );
-  };
+  }, [firstName, lastName, phoneNumber, email, type, id]);
 
   useEffect(() => {
     const populateForm = async () => {
@@ -74,7 +74,10 @@ export function UserPage() {
     populateForm();
   }, [id]);
 
-  const isSaveEnable = !isUserFormValid() || !hasFormChanged();
+  const isSaveDisabled = useMemo(
+    () => !isUserFormValid() || !hasFormChanged(),
+    [isUserFormValid, hasFormChanged],
+  );
 
   return (
     <div>
@@ -130,7 +133,7 @@ export function UserPage() {
           </select>
         </FormField>
 
-        <button type="submit" disabled={isSaveEnable}>
+        <button type="submit" disabled={isSaveDisabled}>
           Save
         </button>
         <button type="button" onClick={handleCancel}>
