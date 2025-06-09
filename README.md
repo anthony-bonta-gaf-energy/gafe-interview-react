@@ -20,6 +20,8 @@ interface User {
 }
 ```
 
+### API
+
 The admin user is the user that is allowed to add new users to the system. There exists an api which conforms to the following rest endpoints.
 
 | Endpoint   | Verb  | Usage                                                                                                                |
@@ -160,7 +162,10 @@ _Scenario_: Cancel the save\
 
 ## Rules
 
-You can use any resources you want. Use anything that makes you the most productive. You do not have to memorize everything, you are free to do research and look up any way you want to do this.
+1. You can use any resources you want. Yes, you may use AI as a resource. If you generate code with AI, be prepared to clean it up and be able to articulate what it is doing.
+1. Do not modify the user-list component. That is not part of the assignment and you do not need to implement the changes to it. The only thing you need to modify is the user-page component.
+1. Make sure you use the API. Your app does not have to successfully create a user anywhere. The API is provided for you in the API section.
+1. You should not be eager loading every user. Assume that we have hundreds of thousands or even millions of users.
 
 ## Submission
 
