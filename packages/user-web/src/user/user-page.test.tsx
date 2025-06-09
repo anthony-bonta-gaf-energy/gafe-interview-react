@@ -2,17 +2,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as userService from './services/user.service.mts';
 import { UserPage } from './user-page';
 
-/**
- * Feature: Create a New User
- *
- * Scenario: Allow me to fill out the form
- * Given I am on the create user page
- * Then I should see an empty user form
- * And I should be able to enter in the information for <Field> of type <Type>
- */
+vi.mock('./services/user.service.mts', () => ({
+  saveUser: vi.fn().mockResolvedValue(undefined),
+}));
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 interface GetViewArgs {
   history?: MemoryHistory;
@@ -52,6 +52,11 @@ describe('UserPage', () => {
       return Promise.resolve(screen.getByRole('button', { name: label }));
     };
 
+    const pressButton = async (label: RegExp) => {
+      const button = await getButton(label);
+      await userEvent.click(button);
+    };
+
     return Promise.resolve({
       getInput,
       getSelect,
@@ -59,6 +64,7 @@ describe('UserPage', () => {
 
       fillInput,
       selectOption,
+      pressButton,
     });
   };
 
@@ -168,6 +174,34 @@ describe('UserPage', () => {
           expect(saveButton).toBeDisabled();
         },
       );
+    });
+
+    describe('Scenario: Save the user when the save button is clicked', () => {
+      it('should save the user and navigate to user list', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Juan',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'juan.perez@example.com',
+          type: 'admin',
+        };
+
+        const history = createMemoryHistory({ initialEntries: ['/users/new'] });
+        const view = await getView({ history });
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+        await view.fillInput(/Last Name/i, mockUser.lastName);
+        await view.fillInput(/Phone Number/i, mockUser.phoneNumber);
+        await view.fillInput(/Email/i, mockUser.email);
+        await view.selectOption(/Type/i, mockUser.type);
+        await view.pressButton(/Save/i);
+
+        // Assert
+        expect(userService.saveUser).toHaveBeenCalledWith(mockUser);
+        expect(history.location.pathname).toBe('/users');
+      });
     });
   });
 
