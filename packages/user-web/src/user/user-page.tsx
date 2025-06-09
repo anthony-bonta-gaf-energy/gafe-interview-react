@@ -69,6 +69,8 @@ export function UserPage() {
     populateForm();
   }, [id]);
 
+  const isSaveEnable = !isUserFormValid() || !hasFormChanged();
+
   return (
     <div>
       <h1>User Page</h1>
@@ -123,7 +125,7 @@ export function UserPage() {
           </select>
         </FormField>
 
-        <button type="submit" disabled={!isUserFormValid() || !hasFormChanged()}>
+        <button type="submit" disabled={isSaveEnable}>
           Save
         </button>
         <button type="button" onClick={handleCancel}>
