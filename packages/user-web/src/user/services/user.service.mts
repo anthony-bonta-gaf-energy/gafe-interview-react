@@ -1,4 +1,4 @@
-import { User } from '../user.mts';
+import { User } from '../user.mjs';
 
 const users = new Map<string, User>();
 

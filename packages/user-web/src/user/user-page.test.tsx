@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as userService from './services/user.service.mts';
-import { UserPage } from './user-page';
+import * as userService from './services/user.service.mjs';
+import { UserPage } from './user-page.js';
 
-vi.mock('./services/user.service.mts', () => ({
+vi.mock('./services/user.service.mjs', () => ({
   saveUser: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -171,7 +171,7 @@ describe('UserPage', () => {
 
           // Assert
           const saveButton = await view.getButton(/Save/i);
-          expect(saveButton).toBeDisabled();
+          expect(saveButton.disabled).toBe(true);
         },
       );
     });

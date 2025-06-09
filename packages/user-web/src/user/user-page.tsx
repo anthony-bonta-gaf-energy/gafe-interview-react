@@ -1,9 +1,9 @@
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { handleError } from '../shared/handleError.mts';
-import { FormField } from './components/atoms/form-field/form-field';
-import { saveUser } from './services/user.service.mts';
-import { UserType } from './user.mts';
+import { handleError } from '../shared/handleError.mjs';
+import { FormField } from './components/atoms/form-field/form-field.js';
+import { saveUser } from './services/user.service.mjs';
+import { UserType } from './user.mjs';
 
 export function UserPage() {
   const [firstName, setFirstName] = useState('');
