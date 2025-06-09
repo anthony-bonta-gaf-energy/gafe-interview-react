@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { createMemoryHistory, MemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { Route, Router, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { UserPage } from './user-page.js';
 
@@ -21,7 +21,10 @@ describe('UserPage', () => {
 
     const target = render(
       <Router location={history.location} navigator={history}>
-        <UserPage />
+        <Routes>
+          <Route path="/users/:id" element={<UserPage />} />
+          <Route path="/users/new" element={<UserPage />} />
+        </Routes>
       </Router>,
     );
 
@@ -225,7 +228,230 @@ describe('UserPage', () => {
     });
   });
 
-  describe('Update', () => {
-    it('should update the user when the Save button is clicked', () => {});
+  describe('Feature: Update an existing user', () => {
+    describe('Scenario: Navigate to the form', () => {
+      it("should populate the form with the user's information", async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Act
+        const firstNameInput = await view.getInput(/First Name/i);
+        const lastNameInput = await view.getInput(/Last Name/i);
+        const emailInput = await view.getInput(/Email/i);
+        const phoneNumberInput = await view.getInput(/Phone Number/i);
+        const typeSelect = await view.getSelect(/Type/i);
+
+        // Assert
+        await waitFor(async () => {
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+          expect(lastNameInput.value).toBe(mockUser.lastName);
+          expect(emailInput.value).toBe(mockUser.email);
+          expect(phoneNumberInput.value).toBe(mockUser.phoneNumber);
+          expect(typeSelect.value).toBe(mockUser.type);
+        });
+      });
+    });
+
+    describe('Scenario: Disable the save button when the form is clean', () => {
+      it('should disable the save button if no changes are made', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Act
+
+        const saveButton = await view.getButton(/Save/i);
+
+        // Assert
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        await waitFor(() => {
+          expect(saveButton.disabled).toBe(true);
+        });
+      });
+    });
+
+    describe('Scenario: Enable the save button', () => {
+      it('should enable the save button when user makes changes and all required fields are filled out', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, 'Juan');
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(false);
+        });
+      });
+    });
+
+    describe('Scenario: Disable the save button when the form returns to clean', () => {
+      it('should disable the save button when the form returns to original state', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Wait for form to populate
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, 'Juan');
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(false);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, mockUser.firstName);
+
+        // Assert
+        await waitFor(async () => {
+          const saveButton = await view.getButton(/Save/i);
+          expect(saveButton.disabled).toBe(true);
+        });
+      });
+    });
+
+    describe('Scenario: Update the user when the save button is clicked', () => {
+      it('should update the user and navigate to user list when all fields are valid and modified', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        const updatedUser = {
+          ...mockUser,
+          firstName: 'Juan',
+        };
+
+        vi.mocked(fetch)
+          .mockImplementationOnce(
+            () => Promise.resolve(new Response(JSON.stringify(mockUser), { status: 200 })), // GET /users/:id
+          )
+          .mockImplementationOnce(() => Promise.resolve(new Response(null, { status: 204 }))); // PATCH /users/:id
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.fillInput(/First Name/i, updatedUser.firstName);
+        await view.pressButton(/Save/i);
+
+        // Assert
+        expect(fetch).toHaveBeenCalledWith('/users/123', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedUser),
+        });
+
+        expect(history.location.pathname).toBe('/');
+      });
+    });
+
+    describe('Scenario: Cancel the save', () => {
+      it('should navigate to user list when cancel button is clicked', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockImplementationOnce(
+          () => Promise.resolve(new Response(JSON.stringify(mockUser), { status: 200 })), // GET /users/:id
+        );
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.pressButton(/Cancel/i);
+
+        // Assert
+        expect(fetch).not.toHaveBeenCalledWith('/users/123', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(mockUser),
+        });
+        expect(history.location.pathname).toBe('/');
+      });
+    });
   });
 });

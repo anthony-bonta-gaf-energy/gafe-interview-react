@@ -1,9 +1,9 @@
-import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import { handleError } from '../shared/handleError.mjs';
 import { FormField } from './components/atoms/form-field/form-field.js';
-import { saveUser } from './services/user.service.mjs';
-import { UserType } from './user.mjs';
+import { getUserById, saveUser, updateUser } from './services/user.service.mjs';
+import { User, UserType } from './user.mjs';
 
 export function UserPage() {
   const [firstName, setFirstName] = useState('');
@@ -13,13 +13,21 @@ export function UserPage() {
   const [type, setType] = useState<UserType | ''>('');
 
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const initialUserRef = useRef<User | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
       const user = { firstName, lastName, phoneNumber, email, type: type as UserType };
-      await saveUser(user);
+
+      if (id) {
+        await updateUser(id, user);
+      } else {
+        await saveUser(user);
+      }
 
       navigate('/');
     } catch (error) {
@@ -31,9 +39,45 @@ export function UserPage() {
     navigate('/');
   };
 
-  const isUserFormValid = (): boolean => {
+  const isUserFormValid = useCallback((): boolean => {
     return Boolean(firstName && lastName && email && type);
-  };
+  }, [firstName, lastName, email, type]);
+
+  const hasFormChanged = useCallback((): boolean => {
+    const initialUser = initialUserRef.current;
+    if (!initialUser || !id) return true;
+
+    return (
+      initialUser.firstName !== firstName ||
+      initialUser.lastName !== lastName ||
+      initialUser.phoneNumber !== phoneNumber ||
+      initialUser.email !== email ||
+      initialUser.type !== type
+    );
+  }, [firstName, lastName, phoneNumber, email, type, id]);
+
+  useEffect(() => {
+    const populateForm = async () => {
+      if (!id) return;
+
+      const user = await getUserById(id);
+      if (!user) return;
+
+      initialUserRef.current = user;
+
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      user.phoneNumber && setPhoneNumber(user.phoneNumber);
+      setEmail(user.email);
+      setType(user.type);
+    };
+    populateForm();
+  }, [id]);
+
+  const isSaveDisabled = useMemo(
+    () => !isUserFormValid() || !hasFormChanged(),
+    [isUserFormValid, hasFormChanged],
+  );
 
   return (
     <div>
@@ -89,7 +133,7 @@ export function UserPage() {
           </select>
         </FormField>
 
-        <button type="submit" disabled={!isUserFormValid()}>
+        <button type="submit" disabled={isSaveDisabled}>
           Save
         </button>
         <button type="button" onClick={handleCancel}>
