@@ -1,6 +1,8 @@
 import { FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { FormField } from './components/atoms/form-field/form-field';
-import { UserType } from './user.mjs';
+import { saveUser } from './services/user.service.mts';
+import { UserType } from './user.mts';
 
 export function UserPage() {
   const [firstName, setFirstName] = useState('');
@@ -9,9 +11,17 @@ export function UserPage() {
   const [email, setEmail] = useState('');
   const [type, setType] = useState<UserType | ''>('');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: save user
+
+    try {
+      await saveUser({ firstName, lastName, phoneNumber, email, type: type as UserType });
+      navigate('/');
+    } catch (error: Error | unknown) {
+      alert(error instanceof Error ? error.message : 'An unknown error occurred');
+    }
   };
 
   const isUserFormValid = (): boolean => {
