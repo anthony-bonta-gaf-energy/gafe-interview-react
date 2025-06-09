@@ -1,8 +1,8 @@
-import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { FormEvent, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import { handleError } from '../shared/handleError.mjs';
 import { FormField } from './components/atoms/form-field/form-field.js';
-import { saveUser } from './services/user.service.mjs';
+import { getUserById, saveUser } from './services/user.service.mjs';
 import { UserType } from './user.mjs';
 
 export function UserPage() {
@@ -13,6 +13,7 @@ export function UserPage() {
   const [type, setType] = useState<UserType | ''>('');
 
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,6 +35,22 @@ export function UserPage() {
   const isUserFormValid = (): boolean => {
     return Boolean(firstName && lastName && email && type);
   };
+
+  useEffect(() => {
+    const populateForm = async () => {
+      if (!id) return;
+
+      const user = await getUserById(id);
+      if (!user) return;
+
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      user.phoneNumber && setPhoneNumber(user.phoneNumber);
+      setEmail(user.email);
+      setType(user.type);
+    };
+    populateForm();
+  }, [id]);
 
   return (
     <div>

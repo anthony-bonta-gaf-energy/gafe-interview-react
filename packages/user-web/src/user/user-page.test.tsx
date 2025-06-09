@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { createMemoryHistory, MemoryHistory } from 'history';
-import { Router } from 'react-router';
+import { Route, Router, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { UserPage } from './user-page.js';
 
@@ -21,7 +21,10 @@ describe('UserPage', () => {
 
     const target = render(
       <Router location={history.location} navigator={history}>
-        <UserPage />
+        <Routes>
+          <Route path="/users/:id" element={<UserPage />} />
+          <Route path="/users/new" element={<UserPage />} />
+        </Routes>
       </Router>,
     );
 
@@ -250,11 +253,13 @@ describe('UserPage', () => {
         const typeSelect = await view.getSelect(/Type/i);
 
         // Assert
-        expect(firstNameInput.value).toBe(mockUser.firstName);
-        expect(lastNameInput.value).toBe(mockUser.lastName);
-        expect(emailInput.value).toBe(mockUser.email);
-        expect(phoneNumberInput.value).toBe(mockUser.phoneNumber);
-        expect(typeSelect.value).toBe(mockUser.type);
+        await waitFor(async () => {
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+          expect(lastNameInput.value).toBe(mockUser.lastName);
+          expect(emailInput.value).toBe(mockUser.email);
+          expect(phoneNumberInput.value).toBe(mockUser.phoneNumber);
+          expect(typeSelect.value).toBe(mockUser.type);
+        });
       });
     });
   });
