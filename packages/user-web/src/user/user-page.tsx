@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { handleError } from '../shared/handleError.mts';
 import { FormField } from './components/atoms/form-field/form-field';
 import { saveUser } from './services/user.service.mts';
 import { UserType } from './user.mts';
@@ -17,10 +18,12 @@ export function UserPage() {
     event.preventDefault();
 
     try {
-      await saveUser({ firstName, lastName, phoneNumber, email, type: type as UserType });
+      const user = { firstName, lastName, phoneNumber, email, type: type as UserType };
+      await saveUser(user);
+
       navigate('/');
-    } catch (error: Error | unknown) {
-      alert(error instanceof Error ? error.message : 'An unknown error occurred');
+    } catch (error) {
+      handleError(error);
     }
   };
 
