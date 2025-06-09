@@ -386,11 +386,18 @@ describe('UserPage', () => {
         };
 
         vi.mocked(fetch)
-          .mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }))
-          .mockResolvedValue(new Response(null, { status: 204 }));
+          .mockImplementationOnce(
+            () => Promise.resolve(new Response(JSON.stringify(mockUser), { status: 200 })), // GET /users/:id
+          )
+          .mockImplementationOnce(() => Promise.resolve(new Response(null, { status: 204 }))); // PATCH /users/:id
 
         const history = createMemoryHistory({ initialEntries: ['/users/123'] });
         const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
 
         // Act
         await view.fillInput(/First Name/i, updatedUser.firstName);
@@ -398,7 +405,7 @@ describe('UserPage', () => {
 
         // Assert
         expect(fetch).toHaveBeenCalledWith('/users/123', {
-          method: 'PATH',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },

@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { handleError } from '../shared/handleError.mjs';
 import { FormField } from './components/atoms/form-field/form-field.js';
-import { getUserById, saveUser } from './services/user.service.mjs';
+import { getUserById, saveUser, updateUser } from './services/user.service.mjs';
 import { User, UserType } from './user.mjs';
 
 export function UserPage() {
@@ -22,7 +22,12 @@ export function UserPage() {
 
     try {
       const user = { firstName, lastName, phoneNumber, email, type: type as UserType };
-      await saveUser(user);
+
+      if (id) {
+        await updateUser(id, user);
+      } else {
+        await saveUser(user);
+      }
 
       navigate('/');
     } catch (error) {
