@@ -203,6 +203,21 @@ describe('UserPage', () => {
         expect(history.location.pathname).toBe('/');
       });
     });
+
+    describe('Scenario: Cancel the save', () => {
+      it('should not save the user and navigate to the user list when clicking cancel button', async () => {
+        // Arrange
+        const history = createMemoryHistory({ initialEntries: ['/users/new'] });
+        const view = await getView({ history });
+
+        // Act
+        await view.pressButton(/Cancel/i);
+
+        // Assert
+        expect(userService.saveUser).not.toHaveBeenCalled();
+        expect(history.location.pathname).toBe('/');
+      });
+    });
   });
 
   describe('Update', () => {
