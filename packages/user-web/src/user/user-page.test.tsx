@@ -415,5 +415,43 @@ describe('UserPage', () => {
         expect(history.location.pathname).toBe('/');
       });
     });
+
+    describe('Scenario: Cancel the save', () => {
+      it('should navigate to user list when cancel button is clicked', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockImplementationOnce(
+          () => Promise.resolve(new Response(JSON.stringify(mockUser), { status: 200 })), // GET /users/:id
+        );
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        await waitFor(async () => {
+          const firstNameInput = await view.getInput(/First Name/i);
+          expect(firstNameInput.value).toBe(mockUser.firstName);
+        });
+
+        // Act
+        await view.pressButton(/Cancel/i);
+
+        // Assert
+        expect(fetch).not.toHaveBeenCalledWith('/users/123', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(mockUser),
+        });
+        expect(history.location.pathname).toBe('/');
+      });
+    });
   });
 });
