@@ -368,5 +368,45 @@ describe('UserPage', () => {
         });
       });
     });
+
+    describe('Scenario: Update the user when the save button is clicked', () => {
+      it('should update the user and navigate to user list when all fields are valid and modified', async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        const updatedUser = {
+          ...mockUser,
+          firstName: 'Juan',
+        };
+
+        vi.mocked(fetch)
+          .mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }))
+          .mockResolvedValue(new Response(null, { status: 204 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Act
+        await view.fillInput(/First Name/i, updatedUser.firstName);
+        await view.pressButton(/Save/i);
+
+        // Assert
+        expect(fetch).toHaveBeenCalledWith('/users/123', {
+          method: 'PATH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedUser),
+        });
+
+        expect(history.location.pathname).toBe('/');
+      });
+    });
   });
 });
