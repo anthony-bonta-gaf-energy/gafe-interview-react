@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { describe, expect, it } from 'vitest';
-import { UserListPage } from './user-list-page';
+import { UserListPage } from './user-list-page.js';
 
 interface GetViewArgs {
   history: History;
