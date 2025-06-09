@@ -225,7 +225,37 @@ describe('UserPage', () => {
     });
   });
 
-  describe('Update', () => {
-    it('should update the user when the Save button is clicked', () => {});
+  describe('Feature: Update an existing user', () => {
+    describe('Scenario: Navigate to the form', () => {
+      it("should populate the form with the user's information", async () => {
+        // Arrange
+        const mockUser = {
+          firstName: 'Luis',
+          lastName: 'Perez',
+          phoneNumber: '5212345678',
+          email: 'luis.perez@example.com',
+          type: 'admin',
+        };
+
+        vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify(mockUser), { status: 200 }));
+
+        const history = createMemoryHistory({ initialEntries: ['/users/123'] });
+        const view = await getView({ history });
+
+        // Act
+        const firstNameInput = await view.getInput(/First Name/i);
+        const lastNameInput = await view.getInput(/Last Name/i);
+        const emailInput = await view.getInput(/Email/i);
+        const phoneNumberInput = await view.getInput(/Phone Number/i);
+        const typeSelect = await view.getSelect(/Type/i);
+
+        // Assert
+        expect(firstNameInput.value).toBe(mockUser.firstName);
+        expect(lastNameInput.value).toBe(mockUser.lastName);
+        expect(emailInput.value).toBe(mockUser.email);
+        expect(phoneNumberInput.value).toBe(mockUser.phoneNumber);
+        expect(typeSelect.value).toBe(mockUser.type);
+      });
+    });
   });
 });
