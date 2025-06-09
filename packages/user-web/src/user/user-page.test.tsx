@@ -3,12 +3,9 @@ import { userEvent } from '@testing-library/user-event';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as userService from './services/user.service.mjs';
 import { UserPage } from './user-page.js';
 
-vi.mock('./services/user.service.mjs', () => ({
-  saveUser: vi.fn().mockResolvedValue(undefined),
-}));
+vi.stubGlobal('fetch', vi.fn());
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -187,6 +184,8 @@ describe('UserPage', () => {
           type: 'admin',
         };
 
+        vi.mocked(fetch).mockResolvedValue(new Response(null, { status: 201 }));
+
         const history = createMemoryHistory({ initialEntries: ['/users/new'] });
         const view = await getView({ history });
 
@@ -199,7 +198,13 @@ describe('UserPage', () => {
         await view.pressButton(/Save/i);
 
         // Assert
-        expect(userService.saveUser).toHaveBeenCalledWith(mockUser);
+        expect(fetch).toHaveBeenCalledWith('/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(mockUser),
+        });
         expect(history.location.pathname).toBe('/');
       });
     });
@@ -214,7 +219,7 @@ describe('UserPage', () => {
         await view.pressButton(/Cancel/i);
 
         // Assert
-        expect(userService.saveUser).not.toHaveBeenCalled();
+        expect(fetch).not.toHaveBeenCalled();
         expect(history.location.pathname).toBe('/');
       });
     });

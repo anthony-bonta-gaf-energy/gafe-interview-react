@@ -1,11 +1,15 @@
 import { User } from '../user.mjs';
 
-const users = new Map<string, User>();
-
 export async function saveUser(user: User): Promise<void> {
-  users.set(user.email, user);
-}
+  const response = await fetch('/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  });
 
-export async function getUserByEmail(email: string): Promise<User | undefined> {
-  return Promise.resolve(users.get(email));
+  if (!response.ok) {
+    throw new Error(`Failed to save user:  ${response.statusText}`);
+  }
 }
