@@ -2,16 +2,20 @@ import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as usersApi from '../../api/users.js';
 import { UserTypeSelect } from '../user.mjs';
 import { UserPage } from './index.js';
 interface GetViewArgs {
   history: History;
 }
 
-afterEach(cleanup);
-
 describe('User Page - Create User', async () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+    cleanup();
+  });
+
   const getView = (args?: GetViewArgs) => {
     const $args = {
       history: createMemoryHistory(),
@@ -96,5 +100,46 @@ describe('User Page - Create User', async () => {
     await user.selectOptions(typeSelect, UserTypeSelect.Admin);
 
     expect(saveButton.disabled).toBeFalsy();
+  });
+
+  it('should create a new user and navigate to list on Save', async () => {
+    const user = userEvent.setup();
+    const history = createMemoryHistory({ initialEntries: ['/users/new'] });
+    const { page } = await getView({ history });
+    const newUser = {
+      firstName: 'New',
+      lastName: 'User',
+      email: 'new.user@example.com',
+      type: UserTypeSelect.Basic,
+    };
+
+    // Mocking API Call
+    vi.spyOn(usersApi, 'createUser').mockReturnValue(
+      new Promise(resolve =>
+        resolve({
+          ok: true,
+          data: {
+            id: 'new-id',
+            ...newUser,
+          },
+        }),
+      ),
+    );
+
+    const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
+    const lastNameInput = page.getByLabelText(/Last Name/i) as HTMLInputElement;
+    const emailInput = page.getByLabelText(/Email/i) as HTMLInputElement;
+    const typeSelect = page.getByLabelText(/Type/i) as HTMLOptionElement;
+    const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
+
+    await user.type(firstNameInput, newUser.firstName);
+    await user.type(lastNameInput, newUser.lastName);
+    await user.type(emailInput, newUser.email);
+    await user.selectOptions(typeSelect, newUser.type);
+    await user.click(saveButton);
+
+    expect(usersApi.createUser).toHaveBeenCalledTimes(1);
+    expect(usersApi.createUser).toHaveBeenCalledWith(newUser);
+    expect(history.location.pathname).toEqual('/');
   });
 });
