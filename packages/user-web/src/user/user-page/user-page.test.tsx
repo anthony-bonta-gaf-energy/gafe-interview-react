@@ -2,7 +2,7 @@ import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as usersApi from '../../api/users.js';
 import { UserTypeSelect } from '../user.mjs';
 import { UserPage } from './index.js';
@@ -11,10 +11,12 @@ interface GetViewArgs {
 }
 
 describe('User Page - Create User', async () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-    cleanup();
-  });
+  const newUser = {
+    firstName: 'New',
+    lastName: 'User',
+    email: 'new.user@example.com',
+    type: UserTypeSelect.Basic,
+  };
 
   const getView = (args?: GetViewArgs) => {
     const $args = {
@@ -32,6 +34,26 @@ describe('User Page - Create User', async () => {
       page,
     });
   };
+
+  beforeEach(() => {
+    // Mocking API Call
+    vi.spyOn(usersApi, 'createUser').mockReturnValue(
+      new Promise(resolve =>
+        resolve({
+          ok: true,
+          data: {
+            id: 'new-id',
+            ...newUser,
+          },
+        }),
+      ),
+    );
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    cleanup();
+  });
 
   it('should render an empty form for a new user and allow input', async () => {
     const user = userEvent.setup();
@@ -51,17 +73,17 @@ describe('User Page - Create User', async () => {
     expect(typeSelect.value).toBe(UserTypeSelect.Empty);
     expect(saveButton).toBeDefined();
 
-    await user.type(firstNameInput, 'John');
-    await user.type(lastNameInput, 'Doe');
-    await user.type(emailInput, 'john.doe@example.com');
+    await user.type(firstNameInput, newUser.firstName);
+    await user.type(lastNameInput, newUser.lastName);
+    await user.type(emailInput, newUser.email);
     await user.type(phoneNumberInput, '1234567890');
-    await user.selectOptions(typeSelect, UserTypeSelect.Admin);
+    await user.selectOptions(typeSelect, newUser.type);
 
-    expect(firstNameInput.value).toBe('John');
-    expect(lastNameInput.value).toBe('Doe');
-    expect(emailInput.value).toBe('john.doe@example.com');
+    expect(firstNameInput.value).toBe(newUser.firstName);
+    expect(lastNameInput.value).toBe(newUser.lastName);
+    expect(emailInput.value).toBe(newUser.email);
     expect(phoneNumberInput.value).toBe('1234567890');
-    expect(typeSelect.value).toBe(UserTypeSelect.Admin);
+    expect(typeSelect.value).toBe(newUser.type);
   });
 
   it('should disable Save Button when required fields are empty (new user)', async () => {
@@ -76,9 +98,9 @@ describe('User Page - Create User', async () => {
     const emailInput = page.getByLabelText(/Email/i) as HTMLInputElement;
     const phoneNumberInput = page.getByLabelText(/Phone Number/i) as HTMLInputElement;
 
-    await user.type(firstNameInput, 'Test');
-    await user.type(lastNameInput, 'User');
-    await user.type(emailInput, 'test.user@example.com');
+    await user.type(firstNameInput, newUser.firstName);
+    await user.type(lastNameInput, newUser.lastName);
+    await user.type(emailInput, newUser.email);
     await user.type(phoneNumberInput, '123'); // Non-required field
 
     expect(saveButton.disabled).toBeTruthy(); // Should still be disabled - Type selection is still missing
@@ -94,10 +116,10 @@ describe('User Page - Create User', async () => {
     const typeSelect = page.getByLabelText(/Type/i) as HTMLOptionElement;
     const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
 
-    await user.type(firstNameInput, 'Test');
-    await user.type(lastNameInput, 'User');
-    await user.type(emailInput, 'test.user@example.com');
-    await user.selectOptions(typeSelect, UserTypeSelect.Admin);
+    await user.type(firstNameInput, newUser.firstName);
+    await user.type(lastNameInput, newUser.lastName);
+    await user.type(emailInput, newUser.email);
+    await user.selectOptions(typeSelect, newUser.type);
 
     expect(saveButton.disabled).toBeFalsy();
   });
@@ -106,25 +128,6 @@ describe('User Page - Create User', async () => {
     const user = userEvent.setup();
     const history = createMemoryHistory({ initialEntries: ['/users/new'] });
     const { page } = await getView({ history });
-    const newUser = {
-      firstName: 'New',
-      lastName: 'User',
-      email: 'new.user@example.com',
-      type: UserTypeSelect.Basic,
-    };
-
-    // Mocking API Call
-    vi.spyOn(usersApi, 'createUser').mockReturnValue(
-      new Promise(resolve =>
-        resolve({
-          ok: true,
-          data: {
-            id: 'new-id',
-            ...newUser,
-          },
-        }),
-      ),
-    );
 
     const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
     const lastNameInput = page.getByLabelText(/Last Name/i) as HTMLInputElement;
@@ -140,6 +143,18 @@ describe('User Page - Create User', async () => {
 
     expect(usersApi.createUser).toHaveBeenCalledTimes(1);
     expect(usersApi.createUser).toHaveBeenCalledWith(newUser);
+    expect(history.location.pathname).toEqual('/');
+  });
+
+  it('should navigate to list on Cancel without saving', async () => {
+    const user = userEvent.setup();
+    const history = createMemoryHistory({ initialEntries: ['/users/new'] });
+    const { page } = await getView({ history });
+
+    const cancelButton = page.getByRole('button', { name: 'Cancel' });
+    await user.click(cancelButton);
+
+    expect(usersApi.createUser).not.toHaveBeenCalled();
     expect(history.location.pathname).toEqual('/');
   });
 });

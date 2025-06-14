@@ -45,6 +45,9 @@ export const UserForm = () => {
       <button type="submit" disabled={!isFormValid}>
         Save
       </button>
+      <button type="button" onClick={navigateToList}>
+        Cancel
+      </button>
     </form>
   );
 };
