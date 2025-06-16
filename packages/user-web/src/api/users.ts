@@ -6,7 +6,7 @@ interface IResponse<T> {
   error?: unknown;
 }
 
-const base_url = '';
+const base_url = 'http://localhost:5173/';
 
 async function fetcher<T>(input: URL | RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, init);

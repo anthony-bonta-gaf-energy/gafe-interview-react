@@ -2,21 +2,45 @@ import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { History, createMemoryHistory } from 'history';
 import { Router } from 'react-router';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as usersApi from '../../api/users.js';
-import { UserTypeSelect } from '../user.mjs';
+import { UserType, UserTypeSelect } from '../user.mjs';
 import { UserPage } from './index.js';
+
+const { newUser } = vi.hoisted(() => {
+  const newUser = {
+    firstName: 'New',
+    lastName: 'User',
+    email: 'new.user@example.com',
+    type: 'basic' as UserType,
+  };
+  return {
+    newUser,
+  };
+});
+
+// Mocking API Call
+vi.spyOn(usersApi, 'createUser').mockReturnValue(
+  new Promise(resolve =>
+    resolve({
+      ok: true,
+      data: {
+        id: 'new-id',
+        ...newUser,
+      },
+    }),
+  ),
+);
+
 interface GetViewArgs {
   history: History;
 }
 
 describe('User Page - Create User', async () => {
-  const newUser = {
-    firstName: 'New',
-    lastName: 'User',
-    email: 'new.user@example.com',
-    type: UserTypeSelect.Basic,
-  };
+  afterEach(() => {
+    vi.clearAllMocks();
+    cleanup();
+  });
 
   const getView = (args?: GetViewArgs) => {
     const $args = {
@@ -35,35 +59,16 @@ describe('User Page - Create User', async () => {
     });
   };
 
-  beforeEach(() => {
-    // Mocking API Call
-    vi.spyOn(usersApi, 'createUser').mockReturnValue(
-      new Promise(resolve =>
-        resolve({
-          ok: true,
-          data: {
-            id: 'new-id',
-            ...newUser,
-          },
-        }),
-      ),
-    );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    cleanup();
-  });
-
   it('should render an empty form for a new user and allow input', async () => {
     const user = userEvent.setup();
     const history = createMemoryHistory({ initialEntries: ['/users/new'] });
     const { page } = await getView({ history });
+
     const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
     const lastNameInput = page.getByLabelText(/Last Name/i) as HTMLInputElement;
     const emailInput = page.getByLabelText(/Email/i) as HTMLInputElement;
     const phoneNumberInput = page.getByLabelText(/Phone Number/i) as HTMLInputElement;
-    const typeSelect = page.getByLabelText(/Type/i) as HTMLOptionElement;
+    const typeSelect = page.getByLabelText(/Type/i) as HTMLSelectElement;
     const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
 
     expect(firstNameInput.value).toBe('');
@@ -89,8 +94,9 @@ describe('User Page - Create User', async () => {
   it('should disable Save Button when required fields are empty (new user)', async () => {
     const history = createMemoryHistory({ initialEntries: ['/users/new'] });
     const { page } = await getView({ history });
+
     const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
-    expect(saveButton.disabled).toBeTruthy();
+    expect(saveButton.disabled).toBeTruthy(); // Initial check before changes
 
     const user = userEvent.setup();
     const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
@@ -110,10 +116,11 @@ describe('User Page - Create User', async () => {
     const user = userEvent.setup();
     const history = createMemoryHistory({ initialEntries: ['/users/new'] });
     const { page } = await getView({ history });
+
     const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
     const lastNameInput = page.getByLabelText(/Last Name/i) as HTMLInputElement;
     const emailInput = page.getByLabelText(/Email/i) as HTMLInputElement;
-    const typeSelect = page.getByLabelText(/Type/i) as HTMLOptionElement;
+    const typeSelect = page.getByLabelText(/Type/i) as HTMLSelectElement;
     const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
 
     await user.type(firstNameInput, newUser.firstName);
@@ -132,7 +139,7 @@ describe('User Page - Create User', async () => {
     const firstNameInput = page.getByLabelText(/First Name/i) as HTMLInputElement;
     const lastNameInput = page.getByLabelText(/Last Name/i) as HTMLInputElement;
     const emailInput = page.getByLabelText(/Email/i) as HTMLInputElement;
-    const typeSelect = page.getByLabelText(/Type/i) as HTMLOptionElement;
+    const typeSelect = page.getByLabelText(/Type/i) as HTMLSelectElement;
     const saveButton = page.getByRole('button', { name: 'Save' }) as HTMLButtonElement;
 
     await user.type(firstNameInput, newUser.firstName);

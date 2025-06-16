@@ -30,7 +30,7 @@ export const useFormFieldValidation = <T extends HTMLElement>({
     if (required && fieldRef.current) {
       registerRequiredInput(name, getValidationValue(fieldRef.current));
     }
-  }, []);
+  }, [fieldRef.current]);
 
   return { ref: fieldRef, onChange: handleChange };
 };
