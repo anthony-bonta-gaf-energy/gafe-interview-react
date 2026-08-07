@@ -16,16 +16,15 @@
     "start": "vite"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
     "history": "^5.3.0",
-    "lodash-es": "^4.17.21",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router": "^7.1.5",
-    "react-router-dom": "^7.5.3",
+    "lodash-es": "^4.18.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.3.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.4",
-    "vitest": "^3.0.5"
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
   }
 }
