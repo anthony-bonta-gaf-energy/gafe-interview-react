@@ -42,6 +42,7 @@ brew install git
 brew install visual-studio-code
 # It's recommended to use nvm for node installations (https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating), but you can use this in lieu for the sake of time. Just target the lts version
 brew install node@22
+brew install yarn
 ```
 
 ### Windows
@@ -50,6 +51,7 @@ brew install node@22
 choco install git
 choco install vscode
 choco install nodejs-lts
+choco install yarn
 ```
 
 Now fork the repository in your own github. You can always delete this afterwards. The goal here is to try and complete the first feature while keeping the second feature in mind.
@@ -59,14 +61,14 @@ To run the application, clone, install and start the user-web workspace
 ```sh
 git clone https://github.com/my-account/gafe-interview-react
 cd /path/to/gafe-interview-react
-npm ci
-npm --workspace @anthony-bonta-gaf-energy/user-web start
+yarn install
+yarn workspace @anthony-bonta-gaf-energy/user-web start
 ```
 
 To run the unit tests
 
 ```sh
-npm test
+yarn test
 ```
 
 ## Frontend Assignment
